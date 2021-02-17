@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{title}}</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/css/uikit.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit-icons.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+        integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+        crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,300" rel="stylesheet" type="text/css">
+    <link rel='stylesheet' href='global.css'>
+</head>
+
+<body>
+    <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
+        {{> title-card title="Point of Interest Application" subTitle="Sign up or log in"}}
+        {{> welcome-menu }}
+    </div>
+
+    <div class="uk-container uk-margin">
+        <div class="uk-child-width-expand uk-flex-center uk-flex-middle uk-text-center" uk-grid>
+            <div class="uk-width-auto@m">
+                <img width="300" src="images/homer.png" />
+            </div>
+            <div class="uk-width-expand@m">
+                <h1 class="uk-heading-small">Point of Interest Application</h1>
+                <p>A point of interest web application that shows interesting national monument specific point
+                    locations.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<div class="uk-margin uk-width-2xlarge uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
+    <table class="uk-table">
+        <caption>
+            Donations to Date
+        </caption>
+        <thead>
+        <th>Amount</th>
+        <th>Method donated</th>
+        <th>Donor Name</th>
+        </thead>
+        <tbody class="uk-text-left">
+        {{#each donations}}
+            <tr>
+                <td> {{amount}} </td>
+                <td> {{method}} </td>
+                <td> {{donor.firstName}} {{donor.lastName}} </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
