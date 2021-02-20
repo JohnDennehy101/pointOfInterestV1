@@ -1,0 +1,22 @@
+<div class="uk-margin uk-width-2xlarge uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
+    <table class="uk-table">
+        <caption>
+            Monuments added to Date
+        </caption>
+        <thead>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Added By</th>
+
+        </thead>
+        <tbody class="uk-text-left">
+            {{#each monuments}}
+            <tr>
+                <td> {{title}} </td>
+                <td> {{description}} </td>
+                <td> {{user.firstName}} {{user.lastName}} </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

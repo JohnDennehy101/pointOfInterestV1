@@ -6,15 +6,15 @@ const User = require("../models/user");
 const Monuments = {
   home: {
     handler: function (request, h) {
-      return h.view("home", { title: "Make a Donation" });
+      return h.view("home", { title: "Add a monument" });
     },
   },
   report: {
     handler: async function (request, h) {
-      //const monuments = await Monument.find().populate("user").lean();
+      const monuments = await Monument.find().populate("user").lean();
       return h.view("report", {
         title: "Monuments added to Date",
-       //monuments: monuments,
+        monuments: monuments,
       });
     },
   },
@@ -28,7 +28,6 @@ const Monuments = {
         description: data.description,
         user: user._id
       });
-      console.log(newMonument);
       await newMonument.save();
       return h.redirect("/report");
     },
