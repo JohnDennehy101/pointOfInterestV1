@@ -1,9 +1,9 @@
 "use strict";
 
-const Donation = require("../models/donations");
+const Monument = require("../models/monuments");
 const User = require("../models/user");
 
-const Donations = {
+const Monuments = {
   home: {
     handler: function (request, h) {
       return h.view("home", { title: "Make a Donation" });
@@ -11,27 +11,28 @@ const Donations = {
   },
   report: {
     handler: async function (request, h) {
-      const donations = await Donation.find().populate("donor").lean();
+      //const monuments = await Monument.find().populate("user").lean();
       return h.view("report", {
-        title: "Donations to Date",
-        donations: donations,
+        title: "Monuments added to Date",
+       //monuments: monuments,
       });
     },
   },
-  donate: {
+  addMonument: {
     handler: async function (request, h) {
       const data = request.payload;
       const id = request.auth.credentials.id;
       const user = await User.findById(id);
-      const newDonation = new Donation({
-        amount: data.amount,
-        method: data.method,
-        donor: user._id
+      const newMonument = new Monument({
+        title: data.title,
+        description: data.description,
+        user: user._id
       });
-      await newDonation.save();
+      console.log(newMonument);
+      await newMonument.save();
       return h.redirect("/report");
     },
   },
 };
 
-module.exports = Donations;
+module.exports = Monuments;

@@ -1,0 +1,16 @@
+"use strict";
+
+const Mongoose = require("mongoose");
+const Schema = Mongoose.Schema;
+
+const monumentSchema = new Schema({
+  title: String,
+  description: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+  
+});
+
+module.exports = Mongoose.model("Monument", monumentSchema);
