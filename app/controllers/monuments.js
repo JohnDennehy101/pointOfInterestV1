@@ -70,6 +70,15 @@ const Monuments = {
     },
      
   },
+  editMonument: {
+    handler: async function(request, h) {
+      const monument = await Monument.findById(request.params.id)
+      return h.view("editMonument", {
+        title: "Edit Monument",
+        monument: monument
+      })
+    }
+  }
 };
 
 module.exports = Monuments;
