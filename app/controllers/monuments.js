@@ -10,14 +10,14 @@ const handleFileUpload = file => {
       const data = file._data
       console.log(data);
 
-      fs.writeFile(`./app/uploads/${filename}`, data, err => {
+        fs.writeFile(`./public/images/${filename}`, data, err => {
         if (err) {
           
           reject(err)
         }
         resolve({
           message: 'Upload successfully!',
-          imageUrl: `./app/uploads/${filename}`
+          imageUrl: `./images/${filename}`
         })
       })
     })
