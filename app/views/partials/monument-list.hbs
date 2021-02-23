@@ -11,11 +11,28 @@
                 <p>{{description}}</p>
             </div>
             <div class="uk-card-footer">
+                <a href="#delete-monument-modal" uk-toggle><span class="uk-margin-small-right" uk-icon="trash"
+                        style="color: red"></span> </a>
+            </div>
+            <div class="uk-card-footer">
                 <a href="editMonumentView/{{_id}}" class="uk-button uk-button-text">Edit</a>
+
             </div>
         </div>
     </div>
     {{/each}}
+
+    <!-- This is the modal -->
+    <div id="delete-monument-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Delete Monument</h2>
+            <p>Are you sure you want to delete this monument?</p>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button class="uk-button uk-button-danger" type="button">Delete</button>
+            </p>
+        </div>
+    </div>
 
 
 </div>
