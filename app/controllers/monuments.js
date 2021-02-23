@@ -72,8 +72,8 @@ const Monuments = {
   },
   editMonument: {
     handler: async function(request, h) {
-      const monument = await Monument.findById(request.params.id)
-      return h.view("editMonument", {
+      const monument = await Monument.findById(request.params.id).lean();
+      return h.view("editPointOfInterest", {
         title: "Edit Monument",
         monument: monument
       })

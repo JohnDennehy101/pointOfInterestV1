@@ -1,0 +1,100 @@
+<div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
+    {{> title-card title="Monument" subTitle="Edit Monument"}}
+    {{> main-menu }}
+</div>
+
+
+
+
+
+
+
+<div class="uk-container uk-margin">
+    <div class="uk-child-width-expand uk-flex-center uk-flex-middle uk-text-center" uk-grid>
+
+        <div class="uk-width-expand@m">
+            <div class="uk-card uk-card-default uk-width-xlarge uk-card-body uk-box-shadow-large">
+                <h3 class="uk-card-title uk-text-center">Edit Monument </h3>
+
+                {{> editPointOfInterestForm}}
+            </div>
+            <div class="uk-width-auto@m">
+                <ul id="preview"
+                    class="uk-list uk-grid-match uk-child-width-1 uk-child-width-1 uk-child-width-1 uk-text-center"
+                    uk-grid uk-scrollspy="cls: uk-animation-scale-up; target: .list-item; delay: 80">
+                    <img width="450" src="../{{monument.image}}" alt="" id="imageEditScreen">
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    let imageInput = document.getElementById('imageInput');
+
+    const preview = document.getElementById('preview');
+    function imgPreviewLi(readerResult, filename) {
+
+        const img = document.getElementById('imageEditScreen')
+        const span = document.createElement("span");
+
+        img.className = "delete-img-preview";
+        img.setAttribute("src", readerResult);
+        img.setAttribute("name", "image")
+        img.style.width = '450px'
+        img.setAttribute("data-name", filename);
+        img.setAttribute("alt", "file-image-preview");
+        span.className = "uk-text-meta uk-text-break file-upload-name";
+        span.textContent = filename;
+        return img
+    }
+
+
+    let imageInputTest = document.getElementById('imageInput');
+
+    function readFile(input) {
+
+        let file = input.files[0];
+
+
+        let fileName = input.files[0].name;
+
+        let reader = new FileReader();
+
+        if (preview.childNodes.length < 1) {
+            reader.onload = function () {
+                let imageResult = imgPreviewLi(reader.result, fileName)
+                preview.append(imageResult)
+            };
+            reader.readAsDataURL(file);
+
+            reader.onerror = function () {
+                console.log(reader.error);
+            };
+
+
+        }
+        else {
+            reader.onload = function () {
+                let imageResult = imgPreviewLi(reader.result, fileName)
+                preview.append(imageResult)
+            };
+            reader.readAsDataURL(file);
+
+            reader.onerror = function () {
+                console.log(reader.error);
+            };
+
+        }
+
+
+
+    }
+
+</script>

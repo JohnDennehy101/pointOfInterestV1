@@ -16,6 +16,7 @@ module.exports = [
   { method: "GET", path: "/report", config: Monuments.report },
   { method: "GET", path: "/editMonument/{id}", config: Monuments.editMonument },
   { method: 'POST', path: '/addMonument', config: Monuments.addMonument },
+   { method: 'POST', path: '/editMonument', config: Monuments.editMonument },
 
   {
     method: "GET",

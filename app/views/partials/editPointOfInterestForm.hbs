@@ -1,0 +1,44 @@
+<form class="uk-form-stacked uk-text-left" enctype="multipart/form-data" action="/editMonument" method="POST">
+    <div class="uk-grid uk-grid-stack">
+        <div class="uk-width-1@m">
+            <div class="uk-margin">
+                <label class="uk-form-label" for="form-stacked-text">Monument Title</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input" id="form-stacked-text" type="text" name="title"
+                        placeholder="Enter Monument Title" value='{{monument.title}}' />
+                </div>
+            </div>
+            <div class="uk-margin">
+                <div class="uk-form-label">Description</div>
+                <div class="uk-form-controls">
+
+                    <textarea class="uk-textarea" id="form-stacked-text" type="text" name="description"
+                        placeholder="Enter Monument Description">{{monument.description}}</textarea>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="uk-margin">
+            <div class="uk-form-label">Image</div>
+            <div uk-form-custom>
+                <input type="file" accept="image/x-png,image/gif,image/jpeg" name="imageUpload" id="imageInput"
+                    onchange="readFile(this)">
+                <button class="uk-button uk-button-default" type="button" tabindex="-1" name='test'>Add Monument
+                    Image</button>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <div class="uk-width-1@m">
+        <div class="uk-margin">
+            <button class="submit uk-button uk-margin-top uk-button-primary uk-button-large uk-width-1-1">Add
+                Monument</button>
+        </div>
+    </div>
+    </div>
+</form>
