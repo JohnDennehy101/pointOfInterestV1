@@ -70,13 +70,42 @@ const Monuments = {
     },
      
   },
-  editMonument: {
+  editMonumentView: {
     handler: async function(request, h) {
       const monument = await Monument.findById(request.params.id).lean();
       return h.view("editPointOfInterest", {
         title: "Edit Monument",
         monument: monument
       })
+    }
+  },
+  editMonument: {
+     payload: {
+
+          output: "stream",
+                        parse: true,
+                        allow: "multipart/form-data",
+                        maxBytes: 2 * 1000 * 1000,
+                        multipart: true
+        },
+    handler: async function(request, h) {
+      const monumentEdit = request.payload;
+
+      const image = await monumentEdit.imageUpload;
+
+      const imageUploadObject = await handleFileUpload(image);
+
+
+      const monument = await Monument.findById(request.params.id);
+      monument.title = monumentEdit.title;
+      monument.description = monumentEdit.description;
+      monument.user = monumentEdit._id;
+      monument.image = imageUploadObject.imageUrl;
+
+      await monument.save();
+
+
+      return h.redirect("/report")
     }
   }
 };
