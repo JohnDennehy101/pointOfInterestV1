@@ -107,6 +107,13 @@ const Monuments = {
 
       return h.redirect("/report")
     }
+  },
+  deleteMonument: {
+    handler: async function(request, h) {
+      const recordId = request.params.id;
+      await Monument.deleteOne({ "_id" : recordId})
+return h.redirect("/report")
+    }
   }
 };
 
