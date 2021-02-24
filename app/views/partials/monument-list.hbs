@@ -11,13 +11,19 @@
                 <p>{{description}}</p>
             </div>
             <div class="uk-card-footer">
-                <a href="#delete-monument-modal" uk-toggle class="deleteMonumentButton"><span
-                        class="uk-margin-small-right" uk-icon="trash" style="color: red"></span> </a>
-            </div>
-            <div class="uk-card-footer">
-                <a href="editMonumentView/{{_id}}" class="uk-button uk-button-text">Edit</a>
+                <div class="uk-grid-collapse uk-child-width-expand@s uk-text-center" uk-grid>
+                    <a href="#delete-monument-modal" uk-toggle class="deleteMonumentButton"><span
+                            class="uk-margin-small-right uk-align-left" uk-icon="trash" style="color: red"></span> </a>
+                    <a href="editMonumentView/{{_id}}" class="uk-button uk-button-text">Edit</a>
+                    <a href="editMonumentView/{{_id}}" class="editMonumentButton"><span
+                            class="uk-margin-small-right uk-align-right" uk-icon="pencil" style="color: blue"></span>
+                    </a>
+
+
+                </div>
 
             </div>
+
         </div>
     </div>
     {{/each}}
@@ -64,13 +70,12 @@
 
         console.log(button)
         button.addEventListener('click', (e) => {
-            let titleText = e.path[5].children[0].children[1].children[0].innerText;
-            console.log(e)
-            console.log(e.path[5].children[0].children[1].children[0].innerText)
-            console.log(e.path[5].children[0].children[3].lastElementChild.href)
-            let stringPosition = e.path[5].children[0].children[3].lastElementChild.href.search('editMonumentView/')
-            console.log(stringPosition)
-            let recordId = e.path[5].children[0].children[3].lastElementChild.href.substring(stringPosition + 17)
+            let titleText = e.path[5].children[1].children[0].innerText;
+
+
+            let stringPosition = e.path[4].children[0].children[2].href.search('editMonumentView/')
+
+            let recordId = e.path[4].children[0].children[2].href.substring(stringPosition + 17)
             deleteButton.setAttribute('href', `deleteMonument/${recordId}`);
             deleteWarningMessage.textContent = `Are you sure you want to delete the '${titleText}' record?`
 
