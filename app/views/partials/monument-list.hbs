@@ -11,15 +11,26 @@
                 <p>{{description}}</p>
             </div>
             <div class="uk-card-footer">
-                <div class="uk-grid-collapse uk-child-width-expand@s uk-text-center" uk-grid>
-                    <a href="#delete-monument-modal" uk-toggle class="deleteMonumentButton"><span
-                            class="uk-margin-small-right uk-align-left" uk-icon="trash" style="color: red"></span> </a>
-                    <a href="editMonumentView/{{_id}}" class="uk-button uk-button-text">Edit</a>
-                    <a href="editMonumentView/{{_id}}" class="editMonumentButton"><span
-                            class="uk-margin-small-right uk-align-right" uk-icon="pencil" style="color: blue"></span>
-                    </a>
 
 
+
+
+                <div uk-grid>
+                    <div class="uk-width-1-3@m">
+                        <a href="#delete-monument-modal" data-id="{{_id}}" uk-toggle class="deleteMonumentButton"
+                            style="width: 10px"><span class="uk-margin-small-right uk-align-left" uk-icon="trash"
+                                style="color: red"></span>
+                        </a>
+                    </div>
+                    <div class="uk-width-1-3@m">
+                        <a href="editMonumentView/{{_id}}" class="uk-button uk-button-text">Edit</a>
+                    </div>
+                    <div class="uk-width-1-3@m">
+                        <a href="editMonumentView/{{_id}}" class="editMonumentButton"><span
+                                class="uk-margin-small-right uk-align-right" uk-icon="pencil"
+                                style="color: blue"></span>
+                        </a>
+                    </div>
                 </div>
 
             </div>
@@ -55,41 +66,41 @@
     const deleteMonumentButtons = document.getElementsByClassName('deleteMonumentButton')
     const deleteButtonModal = document.getElementById('deleteButton')
     const deleteWarningMessage = document.getElementById('deleteWarningMessage');
-    console.log(deleteMonumentButtons)
+    let recordId = ''
 
-    for (let button of deleteMonumentButtons) {
+    function deleteRecord(id) {
+        const response = fetch(`/deleteMonument/${id}`, {
+            method: 'post',
+            body: {
 
-        function deleteRecord(id) {
-            const response = fetch(`/deleteMonument/${id}`, {
-                method: 'post',
-                body: {
-
-                }
-            });
-        }
-
-        console.log(button)
-        button.addEventListener('click', (e) => {
-            let titleText = e.path[5].children[1].children[0].innerText;
+            }
+        });
+    }
 
 
-            let stringPosition = e.path[4].children[0].children[2].href.search('editMonumentView/')
 
-            let recordId = e.path[4].children[0].children[2].href.substring(stringPosition + 17)
+    document.addEventListener('click', (e) => {
+
+        if (e.target.dataset.svg === 'trash') {
+
+            recordId = e.path[4].children[0].lastElementChild.dataset.id
+            let titleText = e.path[6].children[1].children[0].innerText
+
             deleteButton.setAttribute('href', `deleteMonument/${recordId}`);
             deleteWarningMessage.textContent = `Are you sure you want to delete the '${titleText}' record?`
+        }
+        if (e.target.id === 'deleteButton') {
+            deleteRecord(recordId)
+            document.getElementById('triggerSubmit').submit()
+
+        }
 
 
-            deleteButtonModal.addEventListener('click', () => {
-                deleteRecord(recordId)
-                document.getElementById('triggerSubmit').submit()
-            })
+    })
 
 
 
 
 
-        })
-    }
 
 </script>
