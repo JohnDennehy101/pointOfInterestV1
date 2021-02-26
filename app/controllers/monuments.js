@@ -3,23 +3,38 @@
 const Monument = require("../models/monuments");
 const User = require("../models/user");
 const fs = require('fs');
+const cloudinary = require('cloudinary');
+const streamifier = require('streamifier');
+const env = require('dotenv');
+env.config();
+
+cloudinary.config({ 
+  cloud_name: 'monuments', 
+  api_key: process.env.cloudinary_api_key, 
+  api_secret: process.env.cloudinary_api_secret 
+});
 
 const handleFileUpload = file => {
     return new Promise((resolve, reject) => {
       const filename = file.hapi.filename
       const data = file._data
-      console.log(data);
+      console.log(data)
+      //console.log(data);
+      resolve(
+data
+      )
+      
 
-        fs.writeFile(`./public/images/${filename}`, data, err => {
-        if (err) {
+       // fs.writeFile(`./public/images/${filename}`, data, err => {
+       // if (err) {
           
-          reject(err)
-        }
-        resolve({
-          message: 'Upload successfully!',
-          imageUrl: `./images/${filename}`
-        })
-      })
+        //  reject(err)
+        //}
+        //resolve({
+        //  message: 'Upload successfully!',
+        //  imageUrl: `./images/${filename}`
+       // })
+      //})
     })
   }
 
@@ -53,6 +68,64 @@ const Monuments = {
       const data = request.payload;
 
       const image = await data.imageUpload;
+
+
+let streamUpload = (req) => {
+
+  return new Promise((resolve, reject) => {
+
+    let stream = cloudinary.uploader.upload_stream(
+
+      (error, result) => {
+
+        if (result) {
+          console.log('WORKING')
+          resolve(result);
+          
+
+        } else {
+console.log('Not WORKING')
+          reject(error);
+
+        }
+
+      }
+
+    );
+
+   // fs.createReadStream(req.file.buffer).pipe(stream);
+   console.log('CREATING STREAM')
+   streamifier.createReadStream(req).pipe(stream);
+
+  });
+
+};
+
+
+//let streamUpload  = (req) => {
+  //cloudinary.uploader.upload_stream( (result) => console.log(result) ).end( req.file.buffer )
+//}
+
+async function async_func(req) {
+
+  let result = await streamUpload(req);
+
+  console.log(result);
+
+}
+
+
+const imageBuffer = await handleFileUpload(image);
+async_func(imageBuffer);
+
+
+
+
+
+
+
+
+
 
       const imageUploadObject = await handleFileUpload(image);
      
