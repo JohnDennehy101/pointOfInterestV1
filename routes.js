@@ -9,15 +9,16 @@ module.exports = [
   { method: "GET", path: "/login", config: Accounts.showLogin },
   { method: "GET", path: "/logout", config: Accounts.logout },
   { method: "POST", path: "/signup", config: Accounts.signup },
-  { method: 'GET', path: '/settings', config: Accounts.showSettings },
-  { method: 'POST', path: '/settings', config: Accounts.updateSettings },
+  { method: "GET", path: "/settings", config: Accounts.showSettings },
+  { method: "POST", path: "/settings", config: Accounts.updateSettings },
   { method: "POST", path: "/login", config: Accounts.login },
   { method: "GET", path: "/home", config: Monuments.home },
   { method: "GET", path: "/report", config: Monuments.report },
+  { method: "GET", path: "/viewMonument/{id}", config: Monuments.viewMonument },
   { method: "GET", path: "/editMonumentView/{id}", config: Monuments.editMonumentView },
-  { method: 'POST', path: '/addMonument', config: Monuments.addMonument },
-  { method: 'POST', path: '/editMonument/{id}', config: Monuments.editMonument },
-  { method: 'POST', path: '/deleteMonument/{id}', config: Monuments.deleteMonument },
+  { method: "POST", path: "/addMonument", config: Monuments.addMonument },
+  { method: "POST", path: "/editMonument/{id}", config: Monuments.editMonument },
+  { method: "POST", path: "/deleteMonument/{id}", config: Monuments.deleteMonument },
 
   {
     method: "GET",
@@ -26,8 +27,7 @@ module.exports = [
       directory: {
         path: "./public",
       },
-
     },
-    options: { auth: false }
+    options: { auth: false },
   },
 ];

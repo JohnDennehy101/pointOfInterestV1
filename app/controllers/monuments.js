@@ -2,29 +2,24 @@
 
 const Monument = require("../models/monuments");
 const User = require("../models/user");
-const cloudinary = require('cloudinary');
-const streamifier = require('streamifier');
-const env = require('dotenv');
+const cloudinary = require("cloudinary");
+const streamifier = require("streamifier");
+const env = require("dotenv");
 env.config();
 
-cloudinary.config({ 
-  cloud_name: 'monuments', 
-  api_key: process.env.cloudinary_api_key, 
-  api_secret: process.env.cloudinary_api_secret 
+cloudinary.config({
+  cloud_name: "monuments",
+  api_key: process.env.cloudinary_api_key,
+  api_secret: process.env.cloudinary_api_secret,
 });
 
-const handleFileUpload = file => {
-    return new Promise((resolve, reject) => {
-      const filename = file.hapi.filename
-      const data = file._data
-      resolve(
-data
-      )
-      
-
-     
-    })
-  }
+const handleFileUpload = (file) => {
+  return new Promise((resolve, reject) => {
+    const filename = file.hapi.filename;
+    const data = file._data;
+    resolve(data);
+  });
+};
 
 const Monuments = {
   home: {
@@ -41,99 +36,73 @@ const Monuments = {
       });
     },
   },
-  addMonument: {
-     payload: {
-
-          output: "stream",
-                        parse: true,
-                        allow: "multipart/form-data",
-                        maxBytes: 2 * 1000 * 1000,
-                        multipart: true
-        },
-     
+  viewMonument: {
     handler: async function (request, h) {
-      
-      const data = request.payload;
+      const monument = await Monument.findById(request.params.id).lean();
 
-    
+      return h.view("viewPointOfInterest", {
+        title: monument.title,
+        monument: monument,
+      });
+    },
+  },
+
+  addMonument: {
+    payload: {
+      output: "stream",
+      parse: true,
+      allow: "multipart/form-data",
+      maxBytes: 2 * 1000 * 1000,
+      multipart: true,
+    },
+
+    handler: async function (request, h) {
+      const data = request.payload;
 
       const image = await data.imageUpload;
 
+      let streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          let stream = cloudinary.uploader.upload_stream((result, error) => {
+            resolve(result);
+          });
 
-let streamUpload = (req) => {
+          streamifier.createReadStream(req).pipe(stream);
+        });
+      };
 
-  return new Promise((resolve, reject) => {
+      async function async_func(req) {
+        let result = await streamUpload(req);
 
-    let stream = cloudinary.uploader.upload_stream(
-
-      (result, error) => {
-
-resolve(result)
-
+        return result;
       }
 
-    );
-  
-   streamifier.createReadStream(req).pipe(stream);
-   
+      let cloudinaryPromise;
+      let cloudinarySecureUrl;
 
-  });
+      const imageBuffer = await handleFileUpload(image);
+      console.log(imageBuffer);
 
-};
+      if (data.imageUpload.hapi.filename.length !== 0) {
+        cloudinaryPromise = async_func(imageBuffer);
+        cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+          return data.secure_url;
+        });
+      } else {
+        cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
+      }
 
-async function async_func(req) {
+      //let cloudinaryPromise = async_func(imageBuffer);
+      // let cloudinarySecureUrl = cloudinaryPromise.then((data) => {
 
-  let result = await streamUpload(req);
+      //   return data.secure_url
 
-  return result;
- 
+      //        })
 
-}
+      let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
-
-let cloudinaryPromise;
-let cloudinarySecureUrl;
-
-const imageBuffer = await handleFileUpload(image);
-console.log(imageBuffer)
-
-
-if (data.imageUpload.hapi.filename.length !== 0) {
-
-  cloudinaryPromise = async_func(imageBuffer);
-cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-
-  return data.secure_url
-
-       })
-
-      
-
-   
-}
-else {
-  cloudinarySecureUrl = '../images/pointOfInterestDefaultImage.png'
-}
-
-
-
-
-
-
-
-//let cloudinaryPromise = async_func(imageBuffer);
-// let cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-
-//   return data.secure_url
-
-//        })
-
-      
-
-    let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
-
- const id = request.auth.credentials.id;
-        const user = await User.findById(id);
+      const id = request.auth.credentials.id;
+      const user = await User.findById(id);
       const newMonument = new Monument({
         title: request.payload.title,
         description: request.payload.description,
@@ -142,30 +111,27 @@ else {
       });
       await newMonument.save();
       return h.redirect("/report");
-
-      }
-
-      },
+    },
+  },
 
   editMonumentView: {
-    handler: async function(request, h) {
+    handler: async function (request, h) {
       const monument = await Monument.findById(request.params.id).lean();
       return h.view("editPointOfInterest", {
         title: "Edit Monument",
-        monument: monument
-      })
-    }
+        monument: monument,
+      });
+    },
   },
   editMonument: {
-     payload: {
-
-          output: "stream",
-                        parse: true,
-                        allow: "multipart/form-data",
-                        maxBytes: 2 * 1000 * 1000,
-                        multipart: true
-        },
-    handler: async function(request, h) {
+    payload: {
+      output: "stream",
+      parse: true,
+      allow: "multipart/form-data",
+      maxBytes: 2 * 1000 * 1000,
+      multipart: true,
+    },
+    handler: async function (request, h) {
       const monumentEdit = request.payload;
 
       console.log(monumentEdit.imageUpload._readableState);
@@ -174,81 +140,39 @@ else {
 
       const imageUploadObject = await handleFileUpload(image);
 
+      let streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          let stream = cloudinary.uploader.upload_stream((result, error) => {
+            resolve(result);
+          });
 
+          streamifier.createReadStream(req).pipe(stream);
+        });
+      };
 
-let streamUpload = (req) => {
+      async function async_func(req) {
+        let result = await streamUpload(req);
 
-  return new Promise((resolve, reject) => {
-
-    let stream = cloudinary.uploader.upload_stream(
-
-      (result, error) => {
-
-resolve(result)
-
+        return result;
       }
+      let cloudinaryPromise;
+      let cloudinarySecureUrl;
 
-    );
-  
-   streamifier.createReadStream(req).pipe(stream);
-   
-
-  });
-
-};
-
-async function async_func(req) {
-
-  let result = await streamUpload(req);
-
-  return result;
- 
-
-}
-let cloudinaryPromise;
-let cloudinarySecureUrl;
-
-
-const imageBuffer = await handleFileUpload(image);
-console.log(imageBuffer)
-
-
-
-
-
-
-
-
-
-
-
-
+      const imageBuffer = await handleFileUpload(image);
+      console.log(imageBuffer);
 
       const monument = await Monument.findById(request.params.id);
 
+      if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
+        cloudinaryPromise = async_func(imageBuffer);
+        cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+          return data.secure_url;
+        });
+      } else {
+        cloudinarySecureUrl = monument.image;
+      }
 
-
-if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
-
-  cloudinaryPromise = async_func(imageBuffer);
-cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-
-  return data.secure_url
-
-       })
-
-      
-
-   
-}
-else {
-  cloudinarySecureUrl = monument.image
-}
-
- let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
-
-
-
+      let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
       monument.title = monumentEdit.title;
       monument.description = monumentEdit.description;
@@ -257,17 +181,16 @@ else {
 
       await monument.save();
 
-
-      return h.redirect("/report")
-    }
+      return h.redirect("/report");
+    },
   },
   deleteMonument: {
-    handler: async function(request, h) {
+    handler: async function (request, h) {
       const recordId = request.params.id;
-      await Monument.deleteOne({ "_id" : recordId})
-return h.redirect("/report")
-    }
-  }
+      await Monument.deleteOne({ _id: recordId });
+      return h.redirect("/report");
+    },
+  },
 };
 
 module.exports = Monuments;

@@ -1,11 +1,11 @@
 "use strict";
 
-const Hapi = require('@hapi/hapi');
-const Inert = require('@hapi/inert');
-const Vision = require('@hapi/vision');
-const HandleBars = require('handlebars');
+const Hapi = require("@hapi/hapi");
+const Inert = require("@hapi/inert");
+const Vision = require("@hapi/vision");
+const HandleBars = require("handlebars");
 const Cookie = require("@hapi/cookie");
-const env = require('dotenv');
+const env = require("dotenv");
 
 env.config();
 
@@ -14,9 +14,7 @@ const server = Hapi.server({
   host: "localhost",
 });
 
-
-
-require('./app/models/db');
+require("./app/models/db");
 
 async function init() {
   await server.register(Inert);
@@ -27,23 +25,23 @@ async function init() {
       hbs: HandleBars,
     },
     relativeTo: __dirname,
-    path: './app/views',
-    layoutPath: './app/views/layouts',
-    partialsPath: './app/views/partials',
+    path: "./app/views",
+    layoutPath: "./app/views/layouts",
+    partialsPath: "./app/views/partials",
     layout: true,
-    isCached: false
-  })
+    isCached: false,
+  });
 
-  server.auth.strategy('session', 'cookie', {
+  server.auth.strategy("session", "cookie", {
     cookie: {
       name: process.env.cookie_name,
       password: process.env.cookie_password,
-      isSecure: false
+      isSecure: false,
     },
-    redirectTo: '/',
+    redirectTo: "/",
   });
 
-  server.auth.default('session');
+  server.auth.default("session");
 
   server.route(require("./routes"));
   await server.start();
@@ -54,7 +52,5 @@ process.on("unhandledRejection", (err) => {
   console.log(err);
   process.exit(1);
 });
-
-
 
 init();
