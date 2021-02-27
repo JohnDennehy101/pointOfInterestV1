@@ -2,7 +2,6 @@
 
 const Monument = require("../models/monuments");
 const User = require("../models/user");
-const fs = require('fs');
 const cloudinary = require('cloudinary');
 const streamifier = require('streamifier');
 const env = require('dotenv');
@@ -18,23 +17,12 @@ const handleFileUpload = file => {
     return new Promise((resolve, reject) => {
       const filename = file.hapi.filename
       const data = file._data
-      console.log(data)
-      //console.log(data);
       resolve(
 data
       )
       
 
-       // fs.writeFile(`./public/images/${filename}`, data, err => {
-       // if (err) {
-          
-        //  reject(err)
-        //}
-        //resolve({
-        //  message: 'Upload successfully!',
-        //  imageUrl: `./images/${filename}`
-       // })
-      //})
+     
     })
   }
 
@@ -67,6 +55,8 @@ const Monuments = {
       
       const data = request.payload;
 
+    
+
       const image = await data.imageUpload;
 
 
@@ -76,73 +66,60 @@ let streamUpload = (req) => {
 
     let stream = cloudinary.uploader.upload_stream(
 
-      (error, result) => {
+      (result, error) => {
 
-        if (result) {
-          console.log('WORKING')
-          resolve(result);
-          
-
-        } else {
-console.log('Not WORKING')
-          reject(error);
-
-        }
+resolve(result)
 
       }
 
     );
-
-   // fs.createReadStream(req.file.buffer).pipe(stream);
-   console.log('CREATING STREAM')
+  
    streamifier.createReadStream(req).pipe(stream);
+   
 
   });
 
 };
 
-
-//let streamUpload  = (req) => {
-  //cloudinary.uploader.upload_stream( (result) => console.log(result) ).end( req.file.buffer )
-//}
-
 async function async_func(req) {
 
   let result = await streamUpload(req);
 
-  console.log(result);
+  return result;
+ 
 
 }
 
 
 const imageBuffer = await handleFileUpload(image);
-async_func(imageBuffer);
+console.log(imageBuffer)
 
+let cloudinaryPromise = async_func(imageBuffer);
+let cloudinarySecureUrl = cloudinaryPromise.then((data) => {
 
+  return data.secure_url
 
+       })
 
-
-
-
-
-
-
-      const imageUploadObject = await handleFileUpload(image);
-     
       
-      const id = request.auth.credentials.id;
-      const user = await User.findById(id);
+
+    let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+
+ const id = request.auth.credentials.id;
+        const user = await User.findById(id);
       const newMonument = new Monument({
-        title: data.title,
-        description: data.description,
+        title: request.payload.title,
+        description: request.payload.description,
         user: user._id,
-        image: imageUploadObject.imageUrl
+        image: cloudinarySecureUrlPromiseResolved,
       });
       await newMonument.save();
       return h.redirect("/report");
-    },
-     
-  },
+
+      }
+
+      },
+
   editMonumentView: {
     handler: async function(request, h) {
       const monument = await Monument.findById(request.params.id).lean();
