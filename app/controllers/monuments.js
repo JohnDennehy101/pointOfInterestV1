@@ -91,15 +91,42 @@ async function async_func(req) {
 }
 
 
+let cloudinaryPromise;
+let cloudinarySecureUrl;
+
 const imageBuffer = await handleFileUpload(image);
 console.log(imageBuffer)
 
-let cloudinaryPromise = async_func(imageBuffer);
-let cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+
+if (data.imageUpload.hapi.filename.length !== 0) {
+
+  cloudinaryPromise = async_func(imageBuffer);
+cloudinarySecureUrl = cloudinaryPromise.then((data) => {
 
   return data.secure_url
 
        })
+
+      
+
+   
+}
+else {
+  cloudinarySecureUrl = '../images/pointOfInterestDefaultImage.png'
+}
+
+
+
+
+
+
+
+//let cloudinaryPromise = async_func(imageBuffer);
+// let cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+
+//   return data.secure_url
+
+//        })
 
       
 
@@ -199,9 +226,6 @@ console.log(imageBuffer)
 
       const monument = await Monument.findById(request.params.id);
 
-      console.log(monumentEdit.imageUpload._readableState.length)
-      console.log(monumentEdit.imageUpload._readableState)
-      console.log(monumentEdit.imageUpload)
 
 
 if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
