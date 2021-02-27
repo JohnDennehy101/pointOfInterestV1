@@ -141,16 +141,95 @@ let cloudinarySecureUrl = cloudinaryPromise.then((data) => {
     handler: async function(request, h) {
       const monumentEdit = request.payload;
 
+      console.log(monumentEdit.imageUpload._readableState);
+
       const image = await monumentEdit.imageUpload;
 
       const imageUploadObject = await handleFileUpload(image);
 
 
+
+let streamUpload = (req) => {
+
+  return new Promise((resolve, reject) => {
+
+    let stream = cloudinary.uploader.upload_stream(
+
+      (result, error) => {
+
+resolve(result)
+
+      }
+
+    );
+  
+   streamifier.createReadStream(req).pipe(stream);
+   
+
+  });
+
+};
+
+async function async_func(req) {
+
+  let result = await streamUpload(req);
+
+  return result;
+ 
+
+}
+let cloudinaryPromise;
+let cloudinarySecureUrl;
+
+
+const imageBuffer = await handleFileUpload(image);
+console.log(imageBuffer)
+
+
+
+
+
+
+
+
+
+
+
+
+
       const monument = await Monument.findById(request.params.id);
+
+      console.log(monumentEdit.imageUpload._readableState.length)
+      console.log(monumentEdit.imageUpload._readableState)
+      console.log(monumentEdit.imageUpload)
+
+
+if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
+
+  cloudinaryPromise = async_func(imageBuffer);
+cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+
+  return data.secure_url
+
+       })
+
+      
+
+   
+}
+else {
+  cloudinarySecureUrl = monument.image
+}
+
+ let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+
+
+
+
       monument.title = monumentEdit.title;
       monument.description = monumentEdit.description;
       monument.user = monumentEdit._id;
-      monument.image = imageUploadObject.imageUrl;
+      monument.image = cloudinarySecureUrlPromiseResolved;
 
       await monument.save();
 
