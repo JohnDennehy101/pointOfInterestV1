@@ -81,7 +81,6 @@ const Monuments = {
       let cloudinarySecureUrl;
 
       const imageBuffer = await handleFileUpload(image);
-      console.log(imageBuffer);
 
       if (data.imageUpload.hapi.filename.length !== 0) {
         cloudinaryPromise = async_func(imageBuffer);
@@ -92,12 +91,6 @@ const Monuments = {
         cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
       }
 
-      //let cloudinaryPromise = async_func(imageBuffer);
-      // let cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-
-      //   return data.secure_url
-
-      //        })
 
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
@@ -134,8 +127,6 @@ const Monuments = {
     handler: async function (request, h) {
       const monumentEdit = request.payload;
 
-      console.log(monumentEdit.imageUpload._readableState);
-
       const image = await monumentEdit.imageUpload;
 
       const imageUploadObject = await handleFileUpload(image);
@@ -159,7 +150,6 @@ const Monuments = {
       let cloudinarySecureUrl;
 
       const imageBuffer = await handleFileUpload(image);
-      console.log(imageBuffer);
 
       const monument = await Monument.findById(request.params.id);
 

@@ -9,6 +9,7 @@ Mongoose.set("useNewUrlParser", true);
 Mongoose.set("useUnifiedTopology", true);
 
 Mongoose.connect(process.env.db);
+
 const db = Mongoose.connection;
 
 db.on("error", function (err) {
