@@ -67,6 +67,24 @@ const Accounts = {
     },
   },
   updateSettings: {
+    validate: {
+      payload: {
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().required(),
+      },
+      failAction: function (request, h, error) {
+        return h
+          .view("settings", {
+            title: "Sign up error",
+            errors: error.details,
+          })
+          .takeover()
+          .code(400);
+       
+      },
+    },
     handler: async function (request, h) {
       const userEdit = request.payload;
       const id = request.auth.credentials.id;
