@@ -61,9 +61,16 @@ const Accounts = {
   },
   showSettings: {
     handler: async function (request, h) {
+      const settingsCookiePresent = request.auth.credentials.updatedSettings
+      let updatedSettingsNotification;
+      if (settingsCookiePresent) {
+        updatedSettingsNotification = 'true'
+      }
+
+      console.log(settingsCookiePresent)
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      return h.view("settings", { title: "Donation Settings", user: user });
+      return h.view("settings", { title: "User Settings", user: user, notification: updatedSettingsNotification});
     },
   },
   updateSettings: {
@@ -94,7 +101,19 @@ const Accounts = {
       user.email = userEdit.email;
       user.password = userEdit.password;
       await user.save();
-      return h.redirect("/settings");
+      //request.cookieAuth.set({ updatedSettings: 'true' });
+
+       let cookie = request.state.session
+
+      if (!cookie) {
+        cookie = {
+          updatedSettings: true
+        }
+      }
+
+      cookie.lastVisit = Date.now()
+
+      return h.redirect("/settings").state('session', cookie)
     },
   },
   showLogin: {
