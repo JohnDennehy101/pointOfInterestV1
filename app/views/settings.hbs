@@ -68,9 +68,13 @@
 
 
     document.addEventListener('click', (e) => {
+        if (e.target.id === 'deleteAccountButton') {
+            confirmationDeleteAccountButton.setAttribute('href', `deleteAccount/${userId}`);
+        }
         if (e.target.id === 'confirmationDeleteAccountButton') {
             console.log('wrpao')
-            confirmationDeleteAccountButton.setAttribute('href', `deleteAccount/${userId}`);
+            console.log(confirmationDeleteAccountButton)
+
 
 
 

@@ -67,8 +67,10 @@ const Accounts = {
       let now = new Date();
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      
-      if (user.lastUpdated !== null) {
+
+      if (user) {
+
+        if (user.lastUpdated !== null) {
         if ((now.getTime() - 2000) < user.lastUpdated) {
           showUpdatedNotification = 'true'
         }
@@ -77,6 +79,11 @@ const Accounts = {
         }
 
       }
+
+      }
+      
+      
+      
       console.log(showUpdatedNotification)
       
       return h.view("settings", { title: "User Settings", user: user, successNotification: showUpdatedNotification, lastUpdated: user.lastUpdated});
@@ -120,10 +127,10 @@ const Accounts = {
   },
   deleteAccount: {
     handler: async function(request, h) {
-      let params = await request.params.id;
-      console.log(params)
-      console.log('getting the request')
-      return h.view("report")
+      let userId = request.params.id;
+      await User.deleteOne({ _id: userId });
+      request.cookieAuth.clear();
+      return h.view("signup", {accountJustDeleted: 'true'})
     }
   },
   showLogin: {
