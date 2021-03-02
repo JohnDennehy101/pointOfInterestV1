@@ -50,6 +50,7 @@ const Accounts = {
           lastName: payload.lastName,
           email: payload.email,
           password: payload.password,
+          lastUpdated: null
         });
         const user = await newUser.save();
         request.cookieAuth.set({ id: user.id });
@@ -61,16 +62,24 @@ const Accounts = {
   },
   showSettings: {
     handler: async function (request, h) {
-      const settingsCookiePresent = request.auth.credentials.updatedSettings
-      let updatedSettingsNotification;
-      if (settingsCookiePresent) {
-        updatedSettingsNotification = 'true'
-      }
-
-      console.log(settingsCookiePresent)
+      console.log('showing settings page')
+      let showUpdatedNotification;
+      let now = new Date();
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      return h.view("settings", { title: "User Settings", user: user, notification: updatedSettingsNotification});
+      
+      if (user.lastUpdated !== null) {
+        if ((now.getTime() - 2000) < user.lastUpdated) {
+          showUpdatedNotification = 'true'
+        }
+        else {
+          showUpdatedNotification = 'false'
+        }
+
+      }
+      console.log(showUpdatedNotification)
+      
+      return h.view("settings", { title: "User Settings", user: user});
     },
   },
   updateSettings: {
@@ -100,20 +109,13 @@ const Accounts = {
       user.lastName = userEdit.lastName;
       user.email = userEdit.email;
       user.password = userEdit.password;
+      let now = new Date();
+      user.lastUpdated = now.getTime()
       await user.save();
-      //request.cookieAuth.set({ updatedSettings: 'true' });
-
-       let cookie = request.state.session
-
-      if (!cookie) {
-        cookie = {
-          updatedSettings: true
-        }
-      }
-
-      cookie.lastVisit = Date.now()
-
-      return h.redirect("/settings").state('session', cookie)
+      console.log("Updated settings")
+     
+      console.log(now.getTime())
+      return h.redirect("/settings")
     },
   },
   showLogin: {

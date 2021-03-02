@@ -9,6 +9,7 @@ const userSchema = new Schema({
   lastName: String,
   email: String,
   password: String,
+  lastUpdated: Date
 });
 
 userSchema.statics.findByEmail = function (email) {
