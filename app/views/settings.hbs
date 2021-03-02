@@ -29,21 +29,56 @@
         </div>
         <div class="uk-modal-footer uk-text-right">
             <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-            <button class="uk-button uk-button-danger" type="button">Delete</button>
+            <button class="uk-button uk-button-danger" type="button" formmethod="post"
+                id="confirmationDeleteAccountButton" type="submit">Delete</button>
         </div>
     </div>
 </div>
+
+<form id="triggerSubmit" style="display:none">
+
+</form>
+
 {{lastUpdated}}
 <script>
     let notification = '{{successNotification}}';
-    let lastUpdated = '{{ lastUpdated }}';
-    let deleteAccountbutton = document.getElementById('deleteAccountButton');
-    deleteAccountbutton.addEventListener('click', (e) => {
+    let confirmationDeleteAccountButton = document.getElementById('confirmationDeleteAccountButton');
+    let deleteAccountButton = document.getElementById('deleteAccountButton')
+
+    let userId = '{{user._id}}'
+    console.log(userId)
+    deleteAccountButton.addEventListener('click', (e) => {
         e.preventDefault()
+
     })
-    console.log(lastUpdated)
+
     if (notification === 'true') {
         UIkit.notification({ message: '<span uk-icon=\'icon: check\'></span> Successfully updated settings' })
     }
+
+
+    function deleteAccount(id) {
+        const response = fetch(`/deleteAccount/${id}`, {
+            method: 'post',
+            body: {
+
+            }
+        });
+    }
+
+
+    document.addEventListener('click', (e) => {
+        if (e.target.id === 'confirmationDeleteAccountButton') {
+            console.log('wrpao')
+            confirmationDeleteAccountButton.setAttribute('href', `deleteAccount/${userId}`);
+
+
+
+            deleteAccount('{{user._id}}')
+            document.getElementById('triggerSubmit').submit()
+
+        }
+
+    })
 
 </script>

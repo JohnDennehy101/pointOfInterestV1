@@ -118,6 +118,14 @@ const Accounts = {
       return h.redirect("/settings")
     },
   },
+  deleteAccount: {
+    handler: async function(request, h) {
+      let params = await request.params.id;
+      console.log(params)
+      console.log('getting the request')
+      return h.view("report")
+    }
+  },
   showLogin: {
     auth: false,
     handler: function (request, h) {
