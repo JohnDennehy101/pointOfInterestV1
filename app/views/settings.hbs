@@ -17,15 +17,11 @@
         </div>
     </div>
 </div>
-{{notification}}
 
 <script>
-    let notification = '{{notification}}';
-    if (notification) {
-        console.log(notification)
-    }
-    else {
-        console.log("NOT DEFINED")
+    let notification = '{{successNotification}}';
+    if (notification === 'true') {
+        UIkit.notification({ message: '<span uk-icon=\'icon: check\'></span> Successfully updated settings' })
     }
 
 </script>

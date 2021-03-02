@@ -79,7 +79,7 @@ const Accounts = {
       }
       console.log(showUpdatedNotification)
       
-      return h.view("settings", { title: "User Settings", user: user});
+      return h.view("settings", { title: "User Settings", user: user, successNotification: showUpdatedNotification});
     },
   },
   updateSettings: {
