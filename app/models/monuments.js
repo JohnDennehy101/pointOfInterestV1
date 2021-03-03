@@ -11,6 +11,7 @@ const monumentSchema = new Schema({
     ref: "User",
   },
   image: String,
+  province: String
 });
 
 module.exports = Mongoose.model("Monument", monumentSchema);
