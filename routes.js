@@ -12,6 +12,7 @@ module.exports = [
   { method: "GET", path: "/settings", config: Accounts.showSettings },
   { method: "POST", path: "/settings", config: Accounts.updateSettings },
   { method: "POST", path: "/deleteAccount/{id}", config: Accounts.deleteAccount },
+  { method: "GET", path: "/accountDeleted", config: Accounts.accountDeleted },
   { method: "POST", path: "/login", config: Accounts.login },
   { method: "GET", path: "/home", config: Monuments.home },
   { method: "GET", path: "/report", config: Monuments.report },

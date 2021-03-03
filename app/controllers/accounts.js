@@ -129,9 +129,16 @@ const Accounts = {
     handler: async function(request, h) {
       let userId = request.params.id;
       await User.deleteOne({ _id: userId });
-      request.cookieAuth.clear();
-      return h.view("signup", {accountJustDeleted: 'true'})
+      //request.cookieAuth.clear();
+      //return h.view("signup", {accountJustDeleted: 'true'})
+      return h.redirect("/accountDeleted")
     }
+  },
+  accountDeleted: {
+handler: function(request, h) {
+  request.cookieAuth.clear();
+  return h.view("signup", {accountJustDeleted: 'true'})
+}
   },
   showLogin: {
     auth: false,
