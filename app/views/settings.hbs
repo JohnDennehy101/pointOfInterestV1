@@ -29,13 +29,14 @@
         </div>
         <div class="uk-modal-footer uk-text-right">
             <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-            <button class="uk-button uk-button-danger" type="button" formmethod="post"
-                id="confirmationDeleteAccountButton" type="submit">Delete</button>
+            <form action="/deleteAccount/{{user._id}}" method="POST" style="display:inline">
+                <button class="uk-button uk-button-danger" type="submit" formmethod="post"
+                    id="confirmationDeleteAccountButton">Delete</button>
+            </form>
         </div>
     </div>
 </div>
 
-<form id="triggerSubmit" style="display:none">
 
 </form>
 
@@ -57,32 +58,9 @@
     }
 
 
-    function deleteAccount(id) {
-        const response = fetch(`/deleteAccount/${id}`, {
-            method: 'post',
-            body: {
-
-            }
-        });
-    }
-
-
-    document.addEventListener('click', (e) => {
-        if (e.target.id === 'deleteAccountButton') {
-            confirmationDeleteAccountButton.setAttribute('href', `deleteAccount/${userId}`);
-        }
-        if (e.target.id === 'confirmationDeleteAccountButton') {
-            console.log('wrpao')
-            console.log(confirmationDeleteAccountButton)
 
 
 
 
-            deleteAccount('{{user._id}}')
-            document.getElementById('triggerSubmit').submit()
-
-        }
-
-    })
 
 </script>
