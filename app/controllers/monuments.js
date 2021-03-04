@@ -101,7 +101,8 @@ const Monuments = {
         description: request.payload.description,
         user: user._id,
         image: cloudinarySecureUrlPromiseResolved,
-        province: request.payload.province
+        province: request.payload.province,
+        county: request.payload.county
       });
       await newMonument.save();
       return h.redirect("/report");
