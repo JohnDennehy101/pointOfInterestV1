@@ -33,10 +33,7 @@
                     <div class="uk-form-label">County</div>
                     <select class="uk-select" name="county" id="countySelectField">
                         <option value="" disabled selected>Select County</option>
-                        {{!-- <option>Connacht</option>
-                        <option>Munster</option>
-                        <option>Leinster</option>
-                        <option>Ulster</option> --}}
+
                     </select>
                 </div>
 
@@ -103,14 +100,17 @@
             })
 
             function deletePreviousCountyOptions(countySelectField) {
-                while (countySelectField.childNodes.length > 1) {
+                while (countySelectField.childNodes.length) {
                     countySelectField.removeChild(countySelectField.lastChild);
                 }
             }
 
             function createDefaultOption() {
                 let disabledOption = document.createElement('option');
-                disabledOption.innerHTML = '<option value="" disabled selected>Select County</option>'
+                disabledOption.value = ''
+                disabledOption.textContent = 'Select County'
+                disabledOption.disabled = true
+                disabledOption.defaultSelected = true
                 countySelectField.appendChild(disabledOption)
 
 
