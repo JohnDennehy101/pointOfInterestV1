@@ -20,8 +20,19 @@
                 </div>
                 <div class="uk-margin">
                     <div class="uk-form-label">Province</div>
-                    <select class="uk-select" name="province">
+                    <select class="uk-select" name="province" id="provinceSelectField">
                         <option value="" disabled selected>Select Province</option>
+                        <option>Connacht</option>
+                        <option>Munster</option>
+                        <option>Leinster</option>
+                        <option>Ulster</option>
+                    </select>
+                </div>
+
+                <div class="uk-margin" style="display:none" id="countyContainer">
+                    <div class="uk-form-label">County</div>
+                    <select class="uk-select" name="county" id="countySelectField">
+                        <option value="" disabled selected>Select County</option>
                         <option>Connacht</option>
                         <option>Munster</option>
                         <option>Leinster</option>
@@ -63,6 +74,31 @@
         </div>
 
         <script>
+            const countyContainer = document.getElementById('countyContainer');
+            let provinceSelectField = document.getElementById('provinceSelectField');
+            const munsterCounties = ['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford']
+            const leinsterCounties = ['Dublin', 'Wicklow', 'Kildare', 'Meath', 'Westmeath', 'Offaly', 'Kilkenny', 'Laois', 'Wexford', 'Carlow', 'Louth']
+            const connachtCounties = ['Galway', 'Mayo', 'Sligo', 'Roscommon', 'Sligo', 'Leitrim']
+            const ulsterCounties = ['Antrim', 'Derry', 'Down', 'Donegal', 'Fermanagh', 'Cavan', 'Tyrone', 'Armagh', 'Monaghan']
+            let countySelectField = document.getElementById('countySelectField');
+
+            provinceSelectField.addEventListener('change', (e) => {
+                console.log(e.target.value)
+                countyContainer.style.display = 'block'
+
+                if (e.target.value === 'Munster') {
+                    createCountyOptions(munsterCounties)
+                }
+            })
+
+            function createCountyOptions(provinceCountyArray) {
+                for (county in provinceCountyArray) {
+                    console.log(provinceCountyArray[county])
+                }
+            }
+
+
+
 
             const preview = document.getElementById('preview');
             function imgPreviewLi(readerResult, filename) {
@@ -133,84 +169,11 @@
             }
 
 
+
+
         </script>
 
 
-        <!--<div class="uk-width-1@m uk-margin">
-                <div class="uk-margin js-upload uk-placeholder uk-text-center">
-                    <span uk-icon="icon: cloud-upload"></span>
-                    <span class="uk-text-middle">Add an image by dropping it here or</span>
-                    <div uk-form-custom>
-                        <input type="file" accept="image/x-png,image/gif,image/jpeg">
-                        <span class="uk-link">selecting one</span>
-                    </div>
-                </div>
-            </div>
-
-            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
-
-            <script>
-
-                var bar = document.getElementById('js-progressbar');
-
-                UIkit.upload('.js-upload', {
-
-                    url: '/home',
-                    multiple: false,
-
-
-                    beforeSend: function () {
-                        console.log('beforeSend', arguments);
-                    },
-                    beforeAll: function () {
-                        console.log('beforeAll', arguments);
-                    },
-                    load: function () {
-                        console.log('load', arguments);
-                    },
-                    error: function () {
-                        console.log('error', arguments);
-                    },
-                    complete: function () {
-                        console.log('complete', arguments);
-                    },
-
-                    loadStart: function (e) {
-                        console.log('loadStart', arguments);
-
-                        bar.removeAttribute('hidden');
-                        bar.max = e.total;
-                        bar.value = e.loaded;
-                    },
-
-                    progress: function (e) {
-                        console.log('progress', arguments);
-
-                        bar.max = e.total;
-                        bar.value = e.loaded;
-                    },
-
-                    loadEnd: function (e) {
-                        console.log('loadEnd', arguments);
-
-                        bar.max = e.total;
-                        bar.value = e.loaded;
-                    },
-
-                    completeAll: function () {
-                        console.log('completeAll', arguments);
-
-                        setTimeout(function () {
-                            bar.setAttribute('hidden', 'hidden');
-                        }, 1000);
-
-
-                        UIkit.notification("All uploads have been finished");
-                    }
-
-                });
-
-            </script> -->
 
 
 
