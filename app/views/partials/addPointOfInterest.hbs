@@ -33,10 +33,10 @@
                     <div class="uk-form-label">County</div>
                     <select class="uk-select" name="county" id="countySelectField">
                         <option value="" disabled selected>Select County</option>
-                        <option>Connacht</option>
+                        {{!-- <option>Connacht</option>
                         <option>Munster</option>
                         <option>Leinster</option>
-                        <option>Ulster</option>
+                        <option>Ulster</option> --}}
                     </select>
                 </div>
 
@@ -83,17 +83,45 @@
             let countySelectField = document.getElementById('countySelectField');
 
             provinceSelectField.addEventListener('change', (e) => {
-                console.log(e.target.value)
                 countyContainer.style.display = 'block'
+                deletePreviousCountyOptions(countySelectField)
+                createDefaultOption()
 
                 if (e.target.value === 'Munster') {
                     createCountyOptions(munsterCounties)
                 }
+                else if (e.target.value === 'Leinster') {
+                    createCountyOptions(leinsterCounties)
+                }
+                else if (e.target.value === 'Connacht') {
+                    createCountyOptions(connachtCounties)
+                }
+                else if (e.target.value === 'Ulster') {
+                    createCountyOptions(ulsterCounties)
+                }
+
             })
+
+            function deletePreviousCountyOptions(countySelectField) {
+                while (countySelectField.childNodes.length > 1) {
+                    countySelectField.removeChild(countySelectField.lastChild);
+                }
+            }
+
+            function createDefaultOption() {
+                let disabledOption = document.createElement('option');
+                disabledOption.innerHTML = '<option value="" disabled selected>Select County</option>'
+                countySelectField.appendChild(disabledOption)
+
+
+            }
 
             function createCountyOptions(provinceCountyArray) {
                 for (county in provinceCountyArray) {
-                    console.log(provinceCountyArray[county])
+                    let countyOption = document.createElement('option')
+                    countyOption.textContent = provinceCountyArray[county]
+                    countySelectField.appendChild(countyOption)
+
                 }
             }
 
