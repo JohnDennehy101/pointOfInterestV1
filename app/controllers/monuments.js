@@ -55,7 +55,7 @@ const Monuments = {
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
         ulsterMonuments: ulsterMonuments,
-        allMonuments: monuments
+        allMonuments: monuments,
       });
     },
   },
@@ -262,18 +262,16 @@ const Monuments = {
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
         ulsterMonuments: ulsterMonuments,
-        resultCount: resultCount
+        resultCount: resultCount,
       });
     },
   },
   getMonumentByTitle: {
     handler: async function (request, h) {
-
-      
       let monument = await Monument.find({ title: request.params.title }).populate("user").lean();
       let allMonuments = await Monument.find().populate("user").lean();
 
-       if (monument.length === 0) {
+      if (monument.length === 0) {
         monument = undefined;
       }
 
@@ -295,6 +293,53 @@ const Monuments = {
         ulsterMonuments = undefined;
       }
 
+      return h.view("report", {
+        monuments: monument,
+        allMonuments: allMonuments,
+        munsterMonuments: munsterMonuments,
+        leinsterMonuments: leinsterMonuments,
+        connachtMonuments: connachtMonuments,
+        ulsterMonuments: ulsterMonuments,
+        resultCount: 1,
+      });
+    },
+  },
+  searchMonumentTitles: {
+    handler: async function (request, h) {
+      let monument = await Monument.find({ title: { $regex: request.params.title } })
+        .populate("user")
+        .lean();
+      let resultCount = await Monument.find({ title: { $regex: request.params.title } })
+        .populate("user")
+        .count()
+        .lean();
+
+      let allMonuments = await Monument.find().populate("user").lean();
+
+      if (monument.length === 0) {
+        monument = undefined;
+      }
+      if (resultCount === 0) {
+        resultCount = undefined;
+      }
+
+      let munsterMonuments = await Monument.find({ province: "Munster" }).sort({ title: 1 }).lean();
+      if (munsterMonuments.length === 0) {
+        munsterMonuments = undefined;
+      }
+
+      let leinsterMonuments = await Monument.find({ province: "Leinster" }).sort({ title: 1 }).lean();
+      if (leinsterMonuments.length === 0) {
+        leinsterMonuments = undefined;
+      }
+      let connachtMonuments = await Monument.find({ province: "Connacht" }).sort({ title: 1 }).lean();
+      if (connachtMonuments.length === 0) {
+        connachtMonuments = undefined;
+      }
+      let ulsterMonuments = await Monument.find({ province: "Ulster" }).sort({ title: 1 }).lean();
+      if (ulsterMonuments.length === 0) {
+        ulsterMonuments = undefined;
+      }
 
       return h.view("report", {
         monuments: monument,
@@ -303,12 +348,10 @@ const Monuments = {
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
         ulsterMonuments: ulsterMonuments,
-        resultCount: 1
+        resultCount: resultCount,
       });
-
-
-    }
-  }
+    },
+  },
 };
 
 module.exports = Monuments;

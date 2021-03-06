@@ -179,8 +179,8 @@
     <div class="uk-width-auto@m">
         <div class="uk-margin">
             <form class="uk-search uk-search-default uk-width-1-1">
-                <a href="" class="uk-search-icon-flip" uk-search-icon></a>
-                <input class="uk-search-input" type="search" placeholder="Search">
+                <a href="/report" id="searchIcon" class="uk-search-icon-flip" type="submit" uk-search-icon></a>
+                <input class="uk-search-input" id="searchInputField" type="search" placeholder="Search">
             </form>
         </div>
     </div>
@@ -237,6 +237,25 @@
 
     let filterCountyForm = document.getElementById('filterCountyForm');
     let filterTitleForm = document.getElementById('filterTitleForm');
+
+    let searchIcon = document.getElementById('searchIcon');
+    let searchInputField = document.getElementById('searchInputField')
+    let searchForm = document.getElementById('searchForm')
+
+    searchInputField.addEventListener('input', (e) => {
+
+        if (e.target.value.length === 0) {
+            searchIcon.href = '/report'
+        }
+        else {
+            searchIcon.href = `/searchMonuments/${e.target.value}`
+        }
+
+    })
+
+    searchIcon.addEventListener('click', (e) => {
+        console.log(e)
+    })
 
 
 
