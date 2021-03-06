@@ -5,6 +5,7 @@ const User = require("../models/user");
 const cloudinary = require("cloudinary");
 const streamifier = require("streamifier");
 const env = require("dotenv");
+const Joi = require("@hapi/joi");
 env.config();
 
 cloudinary.config({
@@ -75,6 +76,24 @@ const Monuments = {
       allow: "multipart/form-data",
       maxBytes: 2 * 1000 * 1000,
       multipart: true,
+    },
+      validate: {
+      payload: {
+        title: Joi.string().required(),
+        description: Joi.string().required(),
+        imageUpload: Joi.any(),
+        province: Joi.string().required(),
+        county: Joi.string().required(),
+      },
+      failAction: function (request, h, error) {
+        return h
+          .view("home", {
+            title: "Error adding Monument",
+            errors: error.details,
+          })
+          .takeover()
+          .code(400);
+      },
     },
 
     handler: async function (request, h) {
