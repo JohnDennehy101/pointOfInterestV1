@@ -30,10 +30,23 @@ const Monuments = {
   report: {
     handler: async function (request, h) {
       const monuments = await Monument.find().populate("user").lean();
-      const munsterMonuments = await Monument.find({province: 'Munster'}).lean()
-      const leinsterMonuments = await Monument.find({province: 'Leinster'}).lean()
-      const connachtMonuments = await Monument.find({province: 'Connacht'}).lean()
-      const ulsterMonuments = await Monument.find({province: 'Ulster'}).lean()
+      let munsterMonuments = await Monument.find({province: 'Munster'}).sort({"title":1}).lean()
+       if (munsterMonuments.length === 0) {
+        munsterMonuments = undefined
+      }
+   
+      let leinsterMonuments = await Monument.find({province: 'Leinster'}).sort({"title":1}).lean()
+      if (leinsterMonuments.length === 0) {
+        leinsterMonuments = undefined
+      }
+      let connachtMonuments = await Monument.find({province: 'Connacht'}).sort({"title":1}).lean()
+       if (connachtMonuments.length === 0) {
+        connachtMonuments = undefined
+      }
+      let ulsterMonuments = await Monument.find({province: 'Ulster'}).sort({"title":1}).lean()
+       if (ulsterMonuments.length === 0) {
+        ulsterMonuments = undefined
+      }
       return h.view("report", {
         title: "Monuments added to Date",
         monuments: monuments,
