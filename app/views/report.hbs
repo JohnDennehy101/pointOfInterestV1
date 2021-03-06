@@ -1,6 +1,35 @@
 <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
+    <div class="uk-padding-small uk-first-column">
+        <a href='#' uk-toggle="target: #offcanvas-nav">
+            <i class="fas fa-bars fa-2x" title="Index of all monuments" pos="bottom" uk-tooltip></i>
+        </a>
+    </div>
     {{> title-card title="Monument" subTitle="Monuments added so far"}}
     {{> main-menu }}
+</div>
+
+
+
+<div id="offcanvas-nav" uk-offcanvas="overlay: true">
+    <div class="uk-offcanvas-bar">
+
+        <ul class="uk-nav uk-nav-default">
+            <li class="uk-active"><a href="#">Active</a></li>
+            <li class="uk-parent">
+                <a href="#">Parent</a>
+                <ul class="uk-nav-sub">
+                    <li><a href="#">Sub item</a></li>
+                    <li><a href="#">Sub item</a></li>
+                </ul>
+            </li>
+            <li class="uk-nav-header">Header</li>
+            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+            <li class="uk-nav-divider"></li>
+            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+        </ul>
+
+    </div>
 </div>
 
 
