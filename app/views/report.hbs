@@ -8,8 +8,6 @@
     {{> main-menu }}
 </div>
 
-
-
 <div id="offcanvas-nav" uk-offcanvas="overlay: true">
     <div class="uk-offcanvas-bar">
         <button class="uk-offcanvas-close uk-icon uk-close" type="button" uk-close>
@@ -21,8 +19,10 @@
             <li class="uk-parent">
                 <a href="#" uk-toggle="target: .toggle-display-munster">Munster</a>
                 <ul class="uk-nav-sub toggle-display-munster" hidden>
-                    <li><a href="#">Sub item</a></li>
-                    <li><a href="#">Sub item</a></li>
+                    {{#each munsterMonuments}}
+                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
+                    {{/each}}
+
                 </ul>
             </li>
 
@@ -32,8 +32,9 @@
             <li class="uk-parent">
                 <a href="#" uk-toggle="target: .toggle-display-leinster">Leinster</a>
                 <ul class="uk-nav-sub toggle-display-leinster" hidden>
-                    <li><a href="#">Sub item</a></li>
-                    <li><a href="#">Sub item</a></li>
+                    {{#each leinsterMonuments}}
+                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
+                    {{/each}}
                 </ul>
             </li>
 
@@ -43,8 +44,9 @@
             <li class="uk-parent">
                 <a href="#" uk-toggle="target: .toggle-display-connacht">Connacht</a>
                 <ul class="uk-nav-sub toggle-display-connacht" hidden>
-                    <li><a href="#">Sub item</a></li>
-                    <li><a href="#">Sub item</a></li>
+                    {{#each connachtMonuments}}
+                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
+                    {{/each}}
                 </ul>
             </li>
 
@@ -54,8 +56,9 @@
             <li class="uk-parent">
                 <a href="#" uk-toggle="target: .toggle-display-ulster">Ulster</a>
                 <ul class="uk-nav-sub toggle-display-ulster" hidden>
-                    <li><a href="#">Sub item</a></li>
-                    <li><a href="#">Sub item</a></li>
+                    {{#each ulsterMonuments}}
+                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
+                    {{/each}}
                 </ul>
             </li>
 
