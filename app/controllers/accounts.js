@@ -17,8 +17,8 @@ const Accounts = {
   },
   signup: {
     auth: false,
-    
-      validate: {
+
+    validate: {
       payload: {
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
@@ -50,7 +50,7 @@ const Accounts = {
           lastName: payload.lastName,
           email: payload.email,
           password: payload.password,
-          lastUpdated: null
+          lastUpdated: null,
         });
         const user = await newUser.save();
         request.cookieAuth.set({ id: user.id });
@@ -62,31 +62,30 @@ const Accounts = {
   },
   showSettings: {
     handler: async function (request, h) {
-      console.log('showing settings page')
+      console.log("showing settings page");
       let showUpdatedNotification;
       let now = new Date();
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
 
       if (user) {
-
         if (user.lastUpdated !== null) {
-        if ((now.getTime() - 2000) < user.lastUpdated) {
-          showUpdatedNotification = 'true'
+          if (now.getTime() - 2000 < user.lastUpdated) {
+            showUpdatedNotification = "true";
+          } else {
+            showUpdatedNotification = "false";
+          }
         }
-        else {
-          showUpdatedNotification = 'false'
-        }
-
       }
 
-      }
-      
-      
-      
-      console.log(showUpdatedNotification)
-      
-      return h.view("settings", { title: "User Settings", user: user, successNotification: showUpdatedNotification, lastUpdated: user.lastUpdated});
+      console.log(showUpdatedNotification);
+
+      return h.view("settings", {
+        title: "User Settings",
+        user: user,
+        successNotification: showUpdatedNotification,
+        lastUpdated: user.lastUpdated,
+      });
     },
   },
   updateSettings: {
@@ -105,7 +104,6 @@ const Accounts = {
           })
           .takeover()
           .code(400);
-       
       },
     },
     handler: async function (request, h) {
@@ -117,28 +115,28 @@ const Accounts = {
       user.email = userEdit.email;
       user.password = userEdit.password;
       let now = new Date();
-      user.lastUpdated = now.getTime()
+      user.lastUpdated = now.getTime();
       await user.save();
-      console.log("Updated settings")
-     
-      console.log(now.getTime())
-      return h.redirect("/settings")
+      console.log("Updated settings");
+
+      console.log(now.getTime());
+      return h.redirect("/settings");
     },
   },
   deleteAccount: {
-    handler: async function(request, h) {
+    handler: async function (request, h) {
       let userId = request.params.id;
       await User.deleteOne({ _id: userId });
       //request.cookieAuth.clear();
       //return h.view("signup", {accountJustDeleted: 'true'})
-      return h.redirect("/accountDeleted")
-    }
+      return h.redirect("/accountDeleted");
+    },
   },
   accountDeleted: {
-handler: function(request, h) {
-  request.cookieAuth.clear();
-  return h.view("signup", {accountJustDeleted: 'true'})
-}
+    handler: function (request, h) {
+      request.cookieAuth.clear();
+      return h.view("signup", { accountJustDeleted: "true" });
+    },
   },
   showLogin: {
     auth: false,

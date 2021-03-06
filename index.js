@@ -8,7 +8,6 @@ const Cookie = require("@hapi/cookie");
 const env = require("dotenv");
 const Joi = require("@hapi/joi");
 
-
 env.config();
 
 const server = Hapi.server({
@@ -47,8 +46,7 @@ async function init() {
   server.auth.default("session");
 
   server.route(require("./routes"));
-  
-  
+
   await server.start();
   console.log(`Server running at: ${server.info.uri}`);
 }

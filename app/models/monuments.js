@@ -12,7 +12,7 @@ const monumentSchema = new Schema({
   },
   image: String,
   province: String,
-  county: String
+  county: String,
 });
 
 module.exports = Mongoose.model("Monument", monumentSchema);

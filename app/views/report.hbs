@@ -98,6 +98,44 @@
         </div>
         <div class="uk-width-auto@m">
             <button class="uk-button uk-button-default">Filter</button>
+            <div uk-dropdown="mode: click">
+
+                <fieldset class="uk-fieldset">
+
+                    <legend class="uk-legend">County</legend>
+
+                    <div class="uk-margin">
+                        <form id="filterCountyForm" action="/getCountyMonuments" method="GET" style="display:inline">
+                            <select class="uk-select" id="countySelectField">
+                                <option value="" disabled selected>Select County</option>
+                                <option>Cork</option>
+                                <option>Kerry</option>
+                            </select>
+                            <button class="uk-button uk-button-primary uk-margin-top" type="submit" formmethod="get"
+                                id="confirmationDeleteAccountButton">Filter by county</button>
+
+                        </form>
+                    </div>
+
+                    <legend class="uk-legend">Title</legend>
+
+                    <div class="uk-margin">
+                        <select class="uk-select">
+                            <option>Option 01</option>
+                            <option>Option 02</option>
+                        </select>
+                    </div>
+
+
+
+
+
+
+
+
+                </fieldset>
+
+            </div>
         </div>
         <div class="uk-width-auto@m">
             <div class="uk-margin">
@@ -113,21 +151,6 @@
 
 
 
-
-    {{!-- <h1 class="uk-heading-divider">Monuments Added To Date</h1>
-    <div class="uk-float-right">
-        <button class="uk-button uk-button-default">gfg</button>
-    </div>
-    <div class="uk-margin">
-        <ul class="uk-child-width-expand" uk-tab>
-            <li class="uk-active"><a href="#">All</a></li>
-            <li><a href="#">Munster</a></li>
-            <li><a href="#">Leinster</a></li>
-            <li><a href="#">Connacht</a></li>
-            <li><a href="#">Ulster</a></li>
-        </ul>
-    </div> --}}
-
     <div class="uk-divider-icon"></div>
     <div class="uk-child-width-expand uk-flex-center uk-flex-middle uk-text-center" uk-grid>
         <div class="uk-width-expand@m">
@@ -137,9 +160,36 @@
     </div>
 </div>
 
+<form id="filterByCountyTrigger" style="display:none">
+
+</form>
+
 
 
 <script>
+    let countySelectField = document.getElementById('countySelectField');
+    let county = "{{county}}"
+
+    let filterCountyForm = document.getElementById('filterCountyForm')
+
+
+    function getCountyMonuments(county) {
+        const response = fetch(`/getCountyMonuments/${county}`, {
+            method: 'get'
+        });
+    }
+
+    countySelectField.addEventListener('change', (e) => {
+        //getCountyMonuments(e.target.value)
+        county = e.target.value
+        console.log(filterCountyForm.action)
+        filterCountyForm.action = `/getCountyMonuments/${county}`
+        //document.getElementById('filterByCountyTrigger').submit()
+        //console.log(e.target.value)
+        console.log(filterCountyForm)
+    })
+
+
     document.addEventListener('click', (e) => {
         if (e.path[1].textContent.includes('Munster') || e.path[1].textContent.includes('Connacht') || e.path[1].textContent.includes('Leinster') || e.path[1].textContent.includes('Ulster')) {
 
@@ -151,9 +201,6 @@
                 e.path[1].classList.remove('uk-open')
             }
         }
-
-
-
 
     })
 </script>

@@ -31,22 +31,22 @@ const Monuments = {
   report: {
     handler: async function (request, h) {
       const monuments = await Monument.find().populate("user").lean();
-      let munsterMonuments = await Monument.find({province: 'Munster'}).sort({"title":1}).lean()
-       if (munsterMonuments.length === 0) {
-        munsterMonuments = undefined
+      let munsterMonuments = await Monument.find({ province: "Munster" }).sort({ title: 1 }).lean();
+      if (munsterMonuments.length === 0) {
+        munsterMonuments = undefined;
       }
-   
-      let leinsterMonuments = await Monument.find({province: 'Leinster'}).sort({"title":1}).lean()
+
+      let leinsterMonuments = await Monument.find({ province: "Leinster" }).sort({ title: 1 }).lean();
       if (leinsterMonuments.length === 0) {
-        leinsterMonuments = undefined
+        leinsterMonuments = undefined;
       }
-      let connachtMonuments = await Monument.find({province: 'Connacht'}).sort({"title":1}).lean()
-       if (connachtMonuments.length === 0) {
-        connachtMonuments = undefined
+      let connachtMonuments = await Monument.find({ province: "Connacht" }).sort({ title: 1 }).lean();
+      if (connachtMonuments.length === 0) {
+        connachtMonuments = undefined;
       }
-      let ulsterMonuments = await Monument.find({province: 'Ulster'}).sort({"title":1}).lean()
-       if (ulsterMonuments.length === 0) {
-        ulsterMonuments = undefined
+      let ulsterMonuments = await Monument.find({ province: "Ulster" }).sort({ title: 1 }).lean();
+      if (ulsterMonuments.length === 0) {
+        ulsterMonuments = undefined;
       }
       return h.view("report", {
         title: "Monuments added to Date",
@@ -54,7 +54,7 @@ const Monuments = {
         munsterMonuments: munsterMonuments,
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
-        ulsterMonuments: ulsterMonuments
+        ulsterMonuments: ulsterMonuments,
       });
     },
   },
@@ -77,7 +77,7 @@ const Monuments = {
       maxBytes: 2 * 1000 * 1000,
       multipart: true,
     },
-      validate: {
+    validate: {
       payload: {
         title: Joi.string().required(),
         description: Joi.string().required(),
@@ -131,7 +131,6 @@ const Monuments = {
         cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
       }
 
-
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
       const id = request.auth.credentials.id;
@@ -142,7 +141,7 @@ const Monuments = {
         user: user._id,
         image: cloudinarySecureUrlPromiseResolved,
         province: request.payload.province,
-        county: request.payload.county
+        county: request.payload.county,
       });
       await newMonument.save();
       return h.redirect("/report");
@@ -221,6 +220,41 @@ const Monuments = {
       const recordId = request.params.id;
       await Monument.deleteOne({ _id: recordId });
       return h.redirect("/report");
+    },
+  },
+  getCountyMonuments: {
+    handler: async function (request, h) {
+      console.log(request.params.county);
+      let countyMonuments = await Monument.find({ county: request.params.county }).populate("user").lean();
+
+      if (countyMonuments.length === 0) {
+        countyMonuments = undefined;
+      }
+
+      let munsterMonuments = await Monument.find({ province: "Munster" }).sort({ title: 1 }).lean();
+      if (munsterMonuments.length === 0) {
+        munsterMonuments = undefined;
+      }
+
+      let leinsterMonuments = await Monument.find({ province: "Leinster" }).sort({ title: 1 }).lean();
+      if (leinsterMonuments.length === 0) {
+        leinsterMonuments = undefined;
+      }
+      let connachtMonuments = await Monument.find({ province: "Connacht" }).sort({ title: 1 }).lean();
+      if (connachtMonuments.length === 0) {
+        connachtMonuments = undefined;
+      }
+      let ulsterMonuments = await Monument.find({ province: "Ulster" }).sort({ title: 1 }).lean();
+      if (ulsterMonuments.length === 0) {
+        ulsterMonuments = undefined;
+      }
+      return h.view("report", {
+        monuments: countyMonuments,
+        munsterMonuments: munsterMonuments,
+        leinsterMonuments: leinsterMonuments,
+        connachtMonuments: connachtMonuments,
+        ulsterMonuments: ulsterMonuments,
+      });
     },
   },
 };
