@@ -12,22 +12,55 @@
 
 <div id="offcanvas-nav" uk-offcanvas="overlay: true">
     <div class="uk-offcanvas-bar">
+        <button class="uk-offcanvas-close uk-icon uk-close" type="button" uk-close>
 
-        <ul class="uk-nav uk-nav-default">
-            <li class="uk-active"><a href="#">Active</a></li>
+        </button>
+
+        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
+
             <li class="uk-parent">
-                <a href="#">Parent</a>
-                <ul class="uk-nav-sub">
+                <a href="#" uk-toggle="target: .toggle-display-munster">Munster</a>
+                <ul class="uk-nav-sub toggle-display-munster" hidden>
                     <li><a href="#">Sub item</a></li>
                     <li><a href="#">Sub item</a></li>
                 </ul>
             </li>
-            <li class="uk-nav-header">Header</li>
-            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
-            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
-            <li class="uk-nav-divider"></li>
-            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+
         </ul>
+        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
+
+            <li class="uk-parent">
+                <a href="#" uk-toggle="target: .toggle-display-leinster">Leinster</a>
+                <ul class="uk-nav-sub toggle-display-leinster" hidden>
+                    <li><a href="#">Sub item</a></li>
+                    <li><a href="#">Sub item</a></li>
+                </ul>
+            </li>
+
+        </ul>
+        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
+
+            <li class="uk-parent">
+                <a href="#" uk-toggle="target: .toggle-display-connacht">Connacht</a>
+                <ul class="uk-nav-sub toggle-display-connacht" hidden>
+                    <li><a href="#">Sub item</a></li>
+                    <li><a href="#">Sub item</a></li>
+                </ul>
+            </li>
+
+        </ul>
+        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
+
+            <li class="uk-parent">
+                <a href="#" uk-toggle="target: .toggle-display-ulster">Ulster</a>
+                <ul class="uk-nav-sub toggle-display-ulster" hidden>
+                    <li><a href="#">Sub item</a></li>
+                    <li><a href="#">Sub item</a></li>
+                </ul>
+            </li>
+
+        </ul>
+
 
     </div>
 </div>
@@ -57,3 +90,24 @@
         </div>
     </div>
 </div>
+
+
+
+<script>
+    document.addEventListener('click', (e) => {
+        if (e.path[1].textContent.includes('Munster') || e.path[1].textContent.includes('Connacht') || e.path[1].textContent.includes('Leinster') || e.path[1].textContent.includes('Ulster')) {
+
+
+            if (!e.path[1].className.includes('uk-open')) {
+                e.path[1].classList.add('uk-open')
+            }
+            else {
+                e.path[1].classList.remove('uk-open')
+            }
+        }
+
+
+
+
+    })
+</script>
