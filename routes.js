@@ -19,6 +19,7 @@ module.exports = [
   { method: "GET", path: "/viewMonument/{id}", config: Monuments.viewMonument },
   { method: "GET", path: "/editMonumentView/{id}", config: Monuments.editMonumentView },
   { method: "GET", path: "/getCountyMonuments/{county}", config: Monuments.getCountyMonuments },
+  { method: "GET", path: "/getMonumentByTitle/{title}", config: Monuments.getMonumentByTitle },
   { method: "POST", path: "/addMonument", config: Monuments.addMonument },
   { method: "POST", path: "/editMonument/{id}", config: Monuments.editMonument },
   { method: "POST", path: "/deleteMonument/{id}", config: Monuments.deleteMonument },
