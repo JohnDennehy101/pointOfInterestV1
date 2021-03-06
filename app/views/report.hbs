@@ -156,7 +156,7 @@
                         <div class="uk-margin">
                             <select class="uk-select" id="titleSelectField">
                                 <option value="" disabled selected>Select Title</option>
-                                {{#each monuments}}
+                                {{#each allMonuments}}
                                 <option>{{title}}</option>
                                 {{/each}}
                             </select>
@@ -191,6 +191,13 @@
 
 
 <div class="uk-divider-icon"></div>
+
+
+
+
+
+
+{{#if monuments}}
 <div class="uk-child-width-expand uk-flex-center uk-flex-middle uk-text-center" uk-grid>
     <div class="uk-width-expand@m">
         {{> monument-list }}
@@ -202,6 +209,16 @@
 <form id="filterByCountyTrigger" style="display:none">
 
 </form>
+{{else}}
+<div uk-alert>
+    <form action="/report" method="GET" style="display:inline">
+        <a class="uk-alert-close" uk-close></a>
+        <h3>No Results Found</h3>
+        <p>No matches were found for that search. Click the button below to clear the current filter.</p>
+        <button class="uk-button uk-button-primary" type="submit">Clear filter</button>
+    </form>
+</div>
+{{/if}}
 
 
 

@@ -226,6 +226,7 @@ const Monuments = {
     handler: async function (request, h) {
       console.log(request.params.county);
       let countyMonuments = await Monument.find({ county: request.params.county }).populate("user").lean();
+       let allMonuments = await Monument.find().populate("user").lean();
 
       if (countyMonuments.length === 0) {
         countyMonuments = undefined;
@@ -250,6 +251,7 @@ const Monuments = {
       }
       return h.view("report", {
         monuments: countyMonuments,
+        allMonuments: allMonuments,
         munsterMonuments: munsterMonuments,
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
@@ -262,6 +264,7 @@ const Monuments = {
 
       
       let monument = await Monument.find({ title: request.params.title }).populate("user").lean();
+      let allMonuments = await Monument.find().populate("user").lean();
 
        if (monument.length === 0) {
         monument = undefined;
@@ -288,6 +291,7 @@ const Monuments = {
 
       return h.view("report", {
         monuments: monument,
+        allMonuments: allMonuments,
         munsterMonuments: munsterMonuments,
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
