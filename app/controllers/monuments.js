@@ -1,6 +1,7 @@
 "use strict";
 
 const Monument = require("../models/monuments");
+const Category = require("../models/categories");
 const User = require("../models/user");
 const cloudinary = require("cloudinary");
 const streamifier = require("streamifier");
@@ -145,6 +146,19 @@ const Monuments = {
         county: request.payload.county,
       });
       await newMonument.save();
+      // const category = Category.find({title: request.payload.province});
+      // console.log(category);
+      // let newCategory;
+      // if (category.length === 0) {
+      // 
+      // }
+      // await newCategory.save();
+
+       const newCategory = new Category({
+       title: request.payload.province,
+       monuments: newMonument._id
+       })
+       await newCategory.save();
       return h.redirect("/report");
     },
   },
