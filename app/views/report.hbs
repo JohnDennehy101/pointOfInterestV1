@@ -92,7 +92,32 @@
 
 
 <div class="uk-container uk-margin">
-    <h1 class="uk-heading-divider">Monuments Added To Date</h1>
+    <div class="uk-grid-small" uk-grid>
+        <div class="uk-width-expand@m">
+            <h1 class="uk-heading">Monuments Added To Date</h1>
+        </div>
+        <div class="uk-width-auto@m">
+            <button class="uk-button uk-button-default">Filter</button>
+        </div>
+        <div class="uk-width-auto@m">
+            <div class="uk-margin">
+                <form class="uk-search uk-search-default uk-width-1-1">
+                    <a href="" class="uk-search-icon-flip" uk-search-icon></a>
+                    <input class="uk-search-input" type="search" placeholder="Search">
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+    {{!-- <h1 class="uk-heading-divider">Monuments Added To Date</h1>
+    <div class="uk-float-right">
+        <button class="uk-button uk-button-default">gfg</button>
+    </div>
     <div class="uk-margin">
         <ul class="uk-child-width-expand" uk-tab>
             <li class="uk-active"><a href="#">All</a></li>
@@ -101,7 +126,9 @@
             <li><a href="#">Connacht</a></li>
             <li><a href="#">Ulster</a></li>
         </ul>
-    </div>
+    </div> --}}
+
+    <div class="uk-divider-icon"></div>
     <div class="uk-child-width-expand uk-flex-center uk-flex-middle uk-text-center" uk-grid>
         <div class="uk-width-expand@m">
             {{> monument-list }}
