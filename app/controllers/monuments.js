@@ -55,6 +55,7 @@ const Monuments = {
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
         ulsterMonuments: ulsterMonuments,
+        allMonuments: monuments
       });
     },
   },
@@ -226,7 +227,12 @@ const Monuments = {
     handler: async function (request, h) {
       console.log(request.params.county);
       let countyMonuments = await Monument.find({ county: request.params.county }).populate("user").lean();
-       let allMonuments = await Monument.find().populate("user").lean();
+      let resultCount = await Monument.find({ county: request.params.county }).populate("user").count().lean();
+      let allMonuments = await Monument.find().populate("user").lean();
+
+      if (resultCount === 0) {
+        resultCount = undefined;
+      }
 
       if (countyMonuments.length === 0) {
         countyMonuments = undefined;
@@ -256,6 +262,7 @@ const Monuments = {
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
         ulsterMonuments: ulsterMonuments,
+        resultCount: resultCount
       });
     },
   },
@@ -296,6 +303,7 @@ const Monuments = {
         leinsterMonuments: leinsterMonuments,
         connachtMonuments: connachtMonuments,
         ulsterMonuments: ulsterMonuments,
+        resultCount: 1
       });
 
 
