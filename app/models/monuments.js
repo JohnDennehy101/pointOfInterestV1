@@ -10,6 +10,12 @@ const monumentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  categories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+    },
+  ],
   image: String,
   province: String,
   county: String,

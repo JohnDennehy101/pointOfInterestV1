@@ -134,31 +134,38 @@ const Monuments = {
       }
 
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
-
+      const provinceCategoryRef = await Category.find({ title: request.payload.province });
       const id = request.auth.credentials.id;
       const user = await User.findById(id);
       const newMonument = new Monument({
         title: request.payload.title,
         description: request.payload.description,
         user: user._id,
+        //categories: provinceCategoryRef._id,
+        categories: [],
         image: cloudinarySecureUrlPromiseResolved,
         province: request.payload.province,
         county: request.payload.county,
       });
       await newMonument.save();
-      // const category = Category.find({title: request.payload.province});
-      // console.log(category);
-      // let newCategory;
-      // if (category.length === 0) {
-      // 
-      // }
-      // await newCategory.save();
+      let category = await Category.find({ title: request.payload.province });
 
-       const newCategory = new Category({
-       title: request.payload.province,
-       monuments: newMonument._id
-       })
-       await newCategory.save();
+      if (category.length === 0) {
+        category = new Category({
+          title: request.payload.province,
+          monuments: newMonument._id,
+        });
+
+        await category.save();
+      } else {
+        console.log(category);
+        category[0].monuments.push(newMonument._id);
+        await category[0].save();
+      }
+
+      newMonument.categories.push(category._id);
+      await newMonument.save();
+
       return h.redirect("/report");
     },
   },
@@ -234,6 +241,11 @@ const Monuments = {
     handler: async function (request, h) {
       const recordId = request.params.id;
       await Monument.deleteOne({ _id: recordId });
+      //const monumentRecord = await Monument.findById({ _id: recordId })
+      await Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
+      let test = await Category.find();
+      console.log(test);
+
       return h.redirect("/report");
     },
   },
