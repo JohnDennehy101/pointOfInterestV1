@@ -14,71 +14,30 @@
 
         </button>
 
+
+        {{#each categories}}
         <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
 
             <li class="uk-parent">
-                <a href="#" uk-toggle="target: .toggle-display-munster">Munster</a>
-                <ul class="uk-nav-sub toggle-display-munster" hidden>
-                    {{#if munsterMonuments}}
-                    {{#each munsterMonuments}}
+
+                <a href="#" uk-toggle="target: .toggle-display-{{title}}">{{title}}</a>
+                <ul class="uk-nav-sub toggle-display-{{title}}" hidden>
+
+                    {{#each monuments}}
+
                     <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
+
+
                     {{/each}}
-                    {{else}}
-                    <li>No Munster monuments have been added yet.</li>
-                    {{/if}}
+
+                    {{!-- <li>No Munster monuments have been added yet.</li> --}}
+
 
                 </ul>
             </li>
 
         </ul>
-        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
-
-            <li class="uk-parent">
-                <a href="#" uk-toggle="target: .toggle-display-leinster">Leinster</a>
-                <ul class="uk-nav-sub toggle-display-leinster" hidden>
-                    {{#if leinsterMonuments}}
-                    {{#each leinsterMonuments}}
-                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
-                    {{/each}}
-                    {{else}}
-                    <li>No Leinster monuments have been added yet.</li>
-                    {{/if}}
-                </ul>
-            </li>
-
-        </ul>
-        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
-
-            <li class="uk-parent">
-                <a href="#" uk-toggle="target: .toggle-display-connacht">Connacht</a>
-                <ul class="uk-nav-sub toggle-display-connacht" hidden>
-                    {{#if connachtMonuments}}
-                    {{#each connachtMonuments}}
-                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
-                    {{/each}}
-                    {{else}}
-                    <li>No Connacht monuments have been added yet.</li>
-                    {{/if}}
-                </ul>
-            </li>
-
-        </ul>
-        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
-
-            <li class="uk-parent">
-                <a href="#" uk-toggle="target: .toggle-display-ulster">Ulster</a>
-                <ul class="uk-nav-sub toggle-display-ulster" hidden>
-                    {{#if ulsterMonuments}}
-                    {{#each ulsterMonuments}}
-                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
-                    {{/each}}
-                    {{else}}
-                    <li>No Ulster monuments have been added yet.</li>
-                    {{/if}}
-                </ul>
-            </li>
-
-        </ul>
+        {{/each}}
 
 
     </div>
