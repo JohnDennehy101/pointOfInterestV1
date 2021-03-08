@@ -37,6 +37,31 @@
                     </select>
                 </div>
 
+                <div class="uk-margin" id="categoryDivContainer">
+                    <div class="uk-form-label">Existing Categories</div>
+
+                    <div class="uk-width-expand@m">
+                        <label><input class="uk-checkbox" type="checkbox"> B</label>
+                    </div>
+                    <div class="uk-width-expand@m">
+                        <label><input class="uk-checkbox" type="checkbox" checked> A</label><br>
+                    </div>
+
+
+                </div>
+                <div class="uk-margin">
+                    <div class="uk-form-label">New Category</div>
+                    <div class="uk-form-controls">
+
+                        <input class="uk-input" id="newCategoryInputField" type="text" name="newCategoryTitle"
+                            placeholder="Enter Category Title" />
+                    </div>
+
+                    <button class="uk-button uk-button-default uk-margin-top" id="addNewCategoryButton" type="button"
+                        tabindex="-1">Add Category</button>
+
+                </div>
+
             </div>
 
 
@@ -46,7 +71,7 @@
                 <div uk-form-custom>
                     <input type="file" accept="image/x-png,image/gif,image/jpeg" name="imageUpload" id="imageInput"
                         onchange="readFile(this)">
-                    <button class="uk-button uk-button-default" type="button" tabindex="-1" name='test'>Add Monument
+                    <button class="uk-button uk-button-secondary" type="button" tabindex="-1" name='test'>Add Monument
                         Image</button>
                 </div>
                 {{> error}}
@@ -72,6 +97,31 @@
         </div>
 
         <script>
+            let newCategoryInputField = document.getElementById('newCategoryInputField');
+            let addNewCategoryButton = document.getElementById('addNewCategoryButton');
+            let categoryDivContainer = document.getElementById('categoryDivContainer')
+
+            addNewCategoryButton.addEventListener('click', () => {
+                console.log('dj')
+                console.log(newCategoryInputField.value.length)
+                if (newCategoryInputField.value.length > 1) {
+                    let checkboxParentDiv = document.createElement('div')
+                    checkboxParentDiv.classList.add('uk-width-expand@m')
+                    let checkboxLabel = document.createElement('label')
+
+                    checkboxLabel.innerHTML = `<input class="uk-checkbox" type="checkbox"> ${newCategoryInputField.value}`
+                    checkboxParentDiv.appendChild(checkboxLabel)
+
+                    categoryDivContainer.appendChild(checkboxParentDiv)
+                }
+
+
+
+            })
+
+
+
+
             const countyContainer = document.getElementById('countyContainer');
             let provinceSelectField = document.getElementById('provinceSelectField');
             const munsterCounties = ['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford']

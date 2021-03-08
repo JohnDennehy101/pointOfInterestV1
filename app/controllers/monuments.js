@@ -25,8 +25,10 @@ const handleFileUpload = (file) => {
 
 const Monuments = {
   home: {
-    handler: function (request, h) {
-      return h.view("home", { title: "Add a monument" });
+    handler: async function (request, h) {
+      const categories = await Category.find({title: {$nin: ['Munster', 'Leinster', 'Connacht', 'Ulster']}}).lean()
+      console.log(categories)
+      return h.view("home", { title: "Add a monument", categories: categories });
     },
   },
   report: {
