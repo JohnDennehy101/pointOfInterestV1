@@ -2,7 +2,6 @@
 const User = require("../models/user");
 const Joi = require("@hapi/joi");
 
-
 const Accounts = {
   index: {
     auth: false,

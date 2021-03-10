@@ -26,21 +26,20 @@ const handleFileUpload = (file) => {
 const Monuments = {
   home: {
     handler: async function (request, h) {
-      const categories = await Category.find({title: {$nin: ['Munster', 'Leinster', 'Connacht', 'Ulster']}}).lean()
-      console.log(categories)
+      const categories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
+      console.log(categories);
       return h.view("home", { title: "Add a monument", categories: categories });
     },
   },
   report: {
     handler: async function (request, h) {
       const monuments = await Monument.find().populate("user").lean();
-      const categories = await Category.find().populate("monuments").lean()
+      const categories = await Category.find().populate("monuments").lean();
 
-      
       return h.view("report", {
         title: "Monuments added to Date",
         monuments: monuments,
-        categories: categories
+        categories: categories,
       });
     },
   },
@@ -70,6 +69,7 @@ const Monuments = {
         imageUpload: Joi.any(),
         province: Joi.string().required(),
         county: Joi.string().required(),
+        category: Joi.any(),
       },
       failAction: function (request, h, error) {
         return h
@@ -84,6 +84,33 @@ const Monuments = {
 
     handler: async function (request, h) {
       const data = request.payload;
+      let categories = request.payload.category;
+      let newCategoryObjectIds = [];
+      console.log(Array.isArray(categories));
+      // if (Array.isArray(categories) && categories.length > 1) {
+      //   console.log('working to here')
+      // let categoryQuery = await Category.find({ $and: [ {title: {$in: [categories]}}, {title: {$nin: ['Munster', 'Ulster', 'Connacht', 'Leinster']}}]}, {title: 1});
+
+      // console.log(categoryQuery)
+      // if (categoryQuery.length !== categories.length) {
+      //   console.log(categories)
+      // for (let categoryTitle in categories) {
+      //   let test = new Category({
+      //           title: categories[categoryTitle],
+      //           monuments: [],
+      //         });
+
+      //         console.log(test)
+
+      //         await test.save()
+      //         newCategoryObjectIds.push(test._id)
+      // }
+      // console.log(newCategoryObjectIds)
+      // }
+
+      // }
+
+      console.log(data);
 
       const image = await data.imageUpload;
 
@@ -117,6 +144,10 @@ const Monuments = {
         cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
       }
 
+      if (!Array.isArray(categories) && categories !== "") {
+        categories = [categories];
+      }
+
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
       const provinceCategoryRef = await Category.find({ title: request.payload.province });
       const id = request.auth.credentials.id;
@@ -132,6 +163,10 @@ const Monuments = {
         county: request.payload.county,
       });
       await newMonument.save();
+      console.log(newMonument)
+      console.log("Working till after saving monument");
+
+      //Adding province category
       let category = await Category.find({ title: request.payload.province });
 
       if (category.length === 0) {
@@ -141,6 +176,7 @@ const Monuments = {
         });
 
         await category.save();
+        console.log("Working till after saving province category");
       } else {
         console.log(category);
         category[0].monuments.push(newMonument._id);
@@ -148,7 +184,89 @@ const Monuments = {
       }
 
       newMonument.categories.push(category._id);
+      let monumentId = newMonument._id;
       await newMonument.save();
+
+      //Other Categories code
+
+      if (!Array.isArray(categories) && categories !== "") {
+        let categoryQuery = await Category.find({
+          $and: [{ title: categories }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
+        });
+        console.log(categoryQuery);
+        if (categoryQuery.length === 0) {
+          let singleNewCategory = new Category({
+            title: categories,
+            monuments: [monumentId],
+          });
+
+          await singleNewCategory.save();
+          newCategoryObjectIds.push(singleNewCategory._id)
+          console.log(singleNewCategory);
+        } else {
+          console.log("Trying to add value to existing category");
+          console.log(categoryQuery[0]);
+          console.log(categoryQuery[0].monuments);
+          newCategoryObjectIds.push(singleNewCategory._id)
+          //Category.findByIdAndUpdate(_id: categoryQuery[0]._id)
+          categoryQuery[0].monuments.push(monumentId);
+          await categoryQuery[0].save();
+        }
+      } else if (Array.isArray(categories)) {
+        let categoryQuery = await Category.find({
+          $and: [{ title: { $in: categories } }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
+        });
+
+        console.log("Category Query length" + categoryQuery);
+        if (categoryQuery.length === categories.length) {
+          console.log("Lenght of result is same as category");
+          for (let individualCategory in categoryQuery) {
+            console.log("Looping through results, trying to append objectIds to exsiting categories");
+            categoryQuery[individualCategory].monuments.push(monumentId);
+             newCategoryObjectIds.push(categoryQuery[individualCategory]._id)
+            categoryQuery[individualCategory].save();
+          }
+        } else if (categoryQuery.length !== categories.length) {
+          console.log("Length of result is not same as category");
+          for (let individualCategory in categories) {
+            console.log("Checking each individual category");
+            let existingCategoryCheck = await Category.find({ title: categories[individualCategory] });
+
+            console.log(existingCategoryCheck);
+
+            console.log("Lenght of result" + existingCategoryCheck.length);
+            console.log(existingCategoryCheck[0]);
+            console.log(existingCategoryCheck.length);
+
+            if (existingCategoryCheck.length === 1) {
+              existingCategoryCheck[0].monuments.push(monumentId);
+              newCategoryObjectIds.push(existingCategoryCheck[0]._id)
+              console.log("pushing to existing category");
+              await existingCategoryCheck[0].save();
+            } else {
+              let singleNewCategory = new Category({
+                title: categories[individualCategory],
+                monuments: [monumentId],
+              });
+
+              await singleNewCategory.save();
+              newCategoryObjectIds.push(singleNewCategory._id)
+              console.log("pushing to new category");
+              console.log("Just added new category");
+              console.log(singleNewCategory);
+            }
+          }
+        }
+      }
+
+      console.log(newCategoryObjectIds)
+
+      for (let id in newCategoryObjectIds) {
+        console.log(newCategoryObjectIds[id])
+        newMonument.categories.push(newCategoryObjectIds[id])
+      }
+
+      await newMonument.save()
 
       return h.redirect("/report");
     },
@@ -248,7 +366,7 @@ const Monuments = {
         countyMonuments = undefined;
       }
 
-      const categories = await Category.find().populate("monuments").lean()
+      const categories = await Category.find().populate("monuments").lean();
       return h.view("report", {
         monuments: countyMonuments,
         allMonuments: allMonuments,
@@ -261,13 +379,11 @@ const Monuments = {
     handler: async function (request, h) {
       let monument = await Monument.find({ title: request.params.title }).populate("user").lean();
       let allMonuments = await Monument.find().populate("user").lean();
-      const categories = await Category.find().populate("monuments").lean()
+      const categories = await Category.find().populate("monuments").lean();
 
       if (monument.length === 0) {
         monument = undefined;
       }
-
-      
 
       return h.view("report", {
         monuments: monument,
@@ -288,7 +404,7 @@ const Monuments = {
         .lean();
 
       let allMonuments = await Monument.find().populate("user").lean();
-      const categories = await Category.find().populate("monuments").lean()
+      const categories = await Category.find().populate("monuments").lean();
 
       if (monument.length === 0) {
         monument = undefined;
@@ -296,7 +412,6 @@ const Monuments = {
       if (resultCount === 0) {
         resultCount = undefined;
       }
-
 
       return h.view("report", {
         monuments: monument,

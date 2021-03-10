@@ -40,12 +40,7 @@
                 <div class="uk-margin" id="categoryDivContainer">
                     <div class="uk-form-label">Existing Categories</div>
 
-                    <div class="uk-width-expand@m">
-                        <label><input class="uk-checkbox" type="checkbox"> B</label>
-                    </div>
-                    <div class="uk-width-expand@m">
-                        <label><input class="uk-checkbox" type="checkbox" checked> A</label><br>
-                    </div>
+
 
 
                 </div>
@@ -53,7 +48,7 @@
                     <div class="uk-form-label">New Category</div>
                     <div class="uk-form-controls">
 
-                        <input class="uk-input" id="newCategoryInputField" type="text" name="newCategoryTitle"
+                        <input class="uk-input" id="newCategoryInputField" type="text"
                             placeholder="Enter Category Title" />
                     </div>
 
@@ -102,14 +97,14 @@
             let categoryDivContainer = document.getElementById('categoryDivContainer')
 
             addNewCategoryButton.addEventListener('click', () => {
-                console.log('dj')
+
                 console.log(newCategoryInputField.value.length)
                 if (newCategoryInputField.value.length > 1) {
                     let checkboxParentDiv = document.createElement('div')
                     checkboxParentDiv.classList.add('uk-width-expand@m')
                     let checkboxLabel = document.createElement('label')
 
-                    checkboxLabel.innerHTML = `<input class="uk-checkbox" type="checkbox"> ${newCategoryInputField.value}`
+                    checkboxLabel.innerHTML = `<input class="uk-checkbox" name="category" value=${newCategoryInputField.value} type="checkbox"> ${newCategoryInputField.value}`
                     checkboxParentDiv.appendChild(checkboxLabel)
 
                     categoryDivContainer.appendChild(checkboxParentDiv)
