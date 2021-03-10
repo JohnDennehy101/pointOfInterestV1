@@ -39,6 +39,13 @@
 
                 <div class="uk-margin" id="categoryDivContainer">
                     <div class="uk-form-label">Existing Categories</div>
+                    {{#each categories}}
+                    <div class="uk-width-expand@m">
+                        <input class="uk-checkbox" name="category" value={{title}} type="checkbox">
+                        {{title}}
+                    </div>
+
+                    {{/each}}
 
 
 
