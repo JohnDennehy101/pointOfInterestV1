@@ -14,8 +14,10 @@
 
         </button>
 
+        <li class="uk-nav-header">Province</li>
 
-        {{#each categories}}
+
+        {{#each provinceCategories}}
         <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
 
             <li class="uk-parent">
@@ -30,7 +32,32 @@
 
                     {{/each}}
 
-                    {{!-- <li>No Munster monuments have been added yet.</li> --}}
+
+
+
+                </ul>
+            </li>
+
+        </ul>
+        {{/each}}
+
+        <li class="uk-nav-header">Other Categories</li>
+        {{#each otherCategories}}
+        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
+
+            <li class="uk-parent">
+
+                <a href="#" uk-toggle="target: .toggle-display-{{title}}">{{title}}</a>
+                <ul class="uk-nav-sub toggle-display-{{title}}" hidden>
+
+                    {{#each monuments}}
+
+                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
+
+
+                    {{/each}}
+
+
 
 
                 </ul>

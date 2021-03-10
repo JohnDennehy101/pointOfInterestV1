@@ -34,12 +34,14 @@ const Monuments = {
   report: {
     handler: async function (request, h) {
       const monuments = await Monument.find().populate("user").lean();
-      const categories = await Category.find().populate("monuments").lean();
+      const provinceCategories = await Category.find({ title: { $in: ["Munster", "Leinster", "Connacht", "Ulster"] } }).populate("monuments").lean();
+      const otherCategories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).populate("monuments").lean();
 
       return h.view("report", {
         title: "Monuments added to Date",
         monuments: monuments,
-        categories: categories,
+        provinceCategories: provinceCategories,
+        otherCategories: otherCategories
       });
     },
   },
