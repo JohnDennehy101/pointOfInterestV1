@@ -312,6 +312,8 @@ const Monuments = {
     },
     handler: async function (request, h) {
       const monumentEdit = request.payload;
+      let categories = request.payload.category;
+      let newCategoryObjectIds = [];
 
       const image = await monumentEdit.imageUpload;
 
@@ -338,6 +340,25 @@ const Monuments = {
       const imageBuffer = await handleFileUpload(image);
 
       const monument = await Monument.findById(request.params.id);
+      let monumentId = monument._id;
+
+      const otherCategories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
+
+      console.log(otherCategories)
+      for (let singleCategory in otherCategories) {
+        console.log('checking individual categories')
+        console.log(otherCategories[singleCategory].title)
+        let existingCategoryCheck = await Category.find({ title: otherCategories[singleCategory].title }).lean();
+        console.log(existingCategoryCheck)
+        console.log('lenght of query result' + existingCategoryCheck.length)
+        if (existingCategoryCheck.length > 0 && !categories.includes(otherCategories[singleCategory].title)) {
+          let deleteMonumentFromCategory = await Category.updateOne({ title: otherCategories[singleCategory].title }, {$pull: {monuments: {$in: [monumentId]} } }).lean();
+          console.log('trying to remove monument from category')
+          // await deleteMonumentFromCategory.save()
+          console.log(deleteMonumentFromCategory)
+        }
+
+      }
 
       if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
         cloudinaryPromise = async_func(imageBuffer);
@@ -350,12 +371,105 @@ const Monuments = {
 
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
+
+
+
+
+          //Other Categories code
+
+      if (!Array.isArray(categories) && categories !== "") {
+        let categoryQuery = await Category.find({
+          $and: [{ title: categories }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
+        });
+        console.log(categoryQuery);
+        if (categoryQuery.length === 0) {
+          let singleNewCategory = new Category({
+            title: categories,
+            monuments: [monumentId],
+          });
+
+          await singleNewCategory.save();
+          newCategoryObjectIds.push(singleNewCategory._id)
+          console.log(singleNewCategory);
+        } else {
+          console.log("Trying to add value to existing category");
+          console.log(categoryQuery[0]);
+          console.log(categoryQuery[0].monuments);
+          newCategoryObjectIds.push(categoryQuery[0]._id)
+          //categoryQuery[0].monuments.push(monumentId);
+         // await categoryQuery[0].save();
+        }
+      } else if (Array.isArray(categories)) {
+        let categoryQuery = await Category.find({
+          $and: [{ title: { $in: categories } }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
+        });
+
+        console.log("Category Query length" + categoryQuery);
+        if (categoryQuery.length === categories.length) {
+          console.log("Lenght of result is same as category");
+          for (let individualCategory in categoryQuery) {
+            console.log("Looping through results, trying to append objectIds to exsiting categories");
+            //categoryQuery[individualCategory].monuments.push(monumentId);
+             newCategoryObjectIds.push(categoryQuery[individualCategory]._id)
+            //categoryQuery[individualCategory].save();
+          }
+        } else if (categoryQuery.length !== categories.length) {
+          console.log("Length of result is not same as category");
+          for (let individualCategory in categories) {
+            console.log("Checking each individual category");
+            let existingCategoryCheck = await Category.find({ title: categories[individualCategory] });
+
+            console.log(existingCategoryCheck);
+
+            console.log("Lenght of result" + existingCategoryCheck.length);
+            console.log(existingCategoryCheck[0]);
+            console.log(existingCategoryCheck.length);
+
+            if (existingCategoryCheck.length === 1) {
+              //existingCategoryCheck[0].monuments.push(monumentId);
+              newCategoryObjectIds.push(existingCategoryCheck[0]._id)
+              console.log("pushing to existing category");
+              //await existingCategoryCheck[0].save();
+            } else {
+              let singleNewCategory = new Category({
+                title: categories[individualCategory],
+                monuments: [monumentId],
+              });
+
+              await singleNewCategory.save();
+              newCategoryObjectIds.push(singleNewCategory._id)
+              console.log("pushing to new category");
+              console.log("Just added new category");
+              console.log(singleNewCategory);
+            }
+          }
+        }
+      }
+
+
+
+
+
+
+
       monument.title = monumentEdit.title;
       monument.description = monumentEdit.description;
       monument.user = monumentEdit._id;
       monument.image = cloudinarySecureUrlPromiseResolved;
+      monument.categories = []
+
+      await monument.save()
+      console.log(monument)
+
+      if (newCategoryObjectIds.length > 0) {
+        for (let id in newCategoryObjectIds) {
+        console.log(newCategoryObjectIds[id])
+        monument.categories.push(newCategoryObjectIds[id])
+      }
+    }
 
       await monument.save();
+      console.log(monument)
 
       return h.redirect("/report");
     },
