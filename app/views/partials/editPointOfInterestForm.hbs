@@ -17,6 +17,51 @@
                         placeholder="Enter Monument Description">{{monument.description}}</textarea>
                 </div>
             </div>
+
+            <div class="uk-margin">
+                <div class="uk-form-label">Province</div>
+                <select class="uk-select" name="province" id="provinceSelectField">
+                    {{!-- <option value="" disabled selected>Select Province</option> --}}
+                    <option>Connacht</option>
+                    <option>Munster</option>
+                    <option>Leinster</option>
+                    <option>Ulster</option>
+                </select>
+            </div>
+
+            <div class="uk-margin" id="countyContainer">
+                <div class="uk-form-label">County</div>
+                <select class="uk-select" name="county" id="countySelectField">
+                    {{!-- <option value="" disabled selected>Select County</option> --}}
+
+                </select>
+            </div>
+
+            <div class="uk-margin" id="categoryDivContainer">
+                <div class="uk-form-label">Existing Categories</div>
+                {{#each categories}}
+                <div class="uk-width-expand@m">
+                    <input class="uk-checkbox" name="category" value={{title}} type="checkbox">
+                    {{title}}
+                </div>
+
+                {{/each}}
+            </div>
+
+            <div class="uk-margin">
+                <div class="uk-form-label">New Category</div>
+                <div class="uk-form-controls">
+
+                    <input class="uk-input" id="newCategoryInputField" type="text" placeholder="Enter Category Title" />
+                </div>
+
+                <button class="uk-button uk-button-default uk-margin-top" id="addNewCategoryButton" type="button"
+                    tabindex="-1">Add
+                    Category</button>
+
+            </div>
+
+
         </div>
 
 
@@ -26,7 +71,7 @@
             <div uk-form-custom>
                 <input type="file" accept="image/x-png,image/gif,image/jpeg" name="imageUpload" id="imageInput"
                     onchange="readFile(this)">
-                <button class="uk-button uk-button-default" type="button" tabindex="-1" name='test'>Add Monument
+                <button class="uk-button uk-button-secondary" type="button" tabindex="-1" name='test'>Add Monument
                     Image</button>
             </div>
         </div>

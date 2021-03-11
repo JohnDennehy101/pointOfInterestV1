@@ -47,7 +47,7 @@ const Monuments = {
   },
   viewMonument: {
     handler: async function (request, h) {
-      const monument = await Monument.findById(request.params.id).lean();
+      const monument = await Monument.findById(request.params.id).populate("categories").lean();
 
       return h.view("viewPointOfInterest", {
         title: monument.title,
@@ -158,7 +158,6 @@ const Monuments = {
         title: request.payload.title,
         description: request.payload.description,
         user: user._id,
-        //categories: provinceCategoryRef._id,
         categories: [],
         image: cloudinarySecureUrlPromiseResolved,
         province: request.payload.province,
@@ -170,6 +169,8 @@ const Monuments = {
 
       //Adding province category
       let category = await Category.find({ title: request.payload.province });
+      console.log(category)
+      console.log(category.length)
 
       if (category.length === 0) {
         category = new Category({
@@ -178,14 +179,16 @@ const Monuments = {
         });
 
         await category.save();
+        newMonument.categories.push(category._id);
         console.log("Working till after saving province category");
       } else {
         console.log(category);
         category[0].monuments.push(newMonument._id);
         await category[0].save();
+        newMonument.categories.push(category[0]._id)
       }
 
-      newMonument.categories.push(category._id);
+      //newMonument.categories.push(category._id);
       let monumentId = newMonument._id;
       await newMonument.save();
 
@@ -210,7 +213,6 @@ const Monuments = {
           console.log(categoryQuery[0]);
           console.log(categoryQuery[0].monuments);
           newCategoryObjectIds.push(singleNewCategory._id)
-          //Category.findByIdAndUpdate(_id: categoryQuery[0]._id)
           categoryQuery[0].monuments.push(monumentId);
           await categoryQuery[0].save();
         }
@@ -263,12 +265,17 @@ const Monuments = {
 
       console.log(newCategoryObjectIds)
 
-      for (let id in newCategoryObjectIds) {
+      if (newCategoryObjectIds.length > 0) {
+        for (let id in newCategoryObjectIds) {
         console.log(newCategoryObjectIds[id])
         newMonument.categories.push(newCategoryObjectIds[id])
       }
 
       await newMonument.save()
+
+      }
+
+      
 
       return h.redirect("/report");
     },
@@ -277,9 +284,11 @@ const Monuments = {
   editMonumentView: {
     handler: async function (request, h) {
       const monument = await Monument.findById(request.params.id).lean();
+      const categories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
       return h.view("editPointOfInterest", {
         title: "Edit Monument",
         monument: monument,
+        categories: categories
       });
     },
   },

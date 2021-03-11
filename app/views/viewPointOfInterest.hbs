@@ -14,6 +14,26 @@
             {{> viewPointOfInterestImage }}
             {{> viewImageFullScreen }}
 
+            <div class="uk-text-center uk-text-small uk-grid uk-margin-top" uk-grid>
+                <div class="uk-width-expand@m uk-first-column">
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+                        <h4 class="uk-text-primary">Categories</h4>
+                        <ul class="uk-list">
+                            {{#each monument.categories}}
+                            <ul class="uk-list uk-list-circle">{{title}}</ul>
+                            {{/each}}
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+                <div class="uk-width-1-2@m">
+
+                </div>
+            </div>
+
         </div>
 
         <div class="uk-width-1-3@m">
