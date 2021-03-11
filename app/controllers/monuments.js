@@ -283,12 +283,22 @@ const Monuments = {
 
   editMonumentView: {
     handler: async function (request, h) {
-      const monument = await Monument.findById(request.params.id).lean();
+      const monument = await Monument.findById(request.params.id).populate("categories").lean();
+      let selectedCategories = monument.categories;
+      let selectedCategoryTitles = []
+
+      if (selectedCategories.length !== 0) {
+        for (let category in selectedCategories) {
+          selectedCategoryTitles.push(selectedCategories[category].title)
+        }
+      }
       const categories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
+  
       return h.view("editPointOfInterest", {
         title: "Edit Monument",
         monument: monument,
-        categories: categories
+        categories: categories,
+        selectedCategories: selectedCategoryTitles
       });
     },
   },

@@ -64,6 +64,7 @@
 
     const countyContainer = document.getElementById('countyContainer');
     let provinceSelectField = document.getElementById('provinceSelectField');
+    let existingCategoriesParent = document.getElementById('existingCategoriesParent');
     const munsterCounties = ['Cork', 'Clare', 'Kerry', 'Limerick', 'Tipperary', 'Waterford']
     const leinsterCounties = ['Dublin', 'Wicklow', 'Kildare', 'Meath', 'Westmeath', 'Offaly', 'Kilkenny', 'Laois', 'Wexford', 'Carlow', 'Louth']
     const connachtCounties = ['Galway', 'Mayo', 'Sligo', 'Roscommon', 'Sligo', 'Leitrim']
@@ -71,6 +72,9 @@
     let countySelectField = document.getElementById('countySelectField');
 
     let selectedProvince = '{{monument.province}}'
+    let selectedCounty = '{{monument.county}}'
+    //let existingSelectedCategories = '{{monument.categories}}'
+    let existingSelectedCategories = '{{selectedCategories}}'
     console.log(selectedProvince)
 
     function populateProvinceCounties(provinceValue) {
@@ -102,7 +106,35 @@
 
 
         }
-        //console.log(provinceSelectField.children)
+
+
+    }
+
+    function selectCurrentCounty(countyTitle) {
+        let countyOptions = countySelectField.children
+
+
+        for (county in countyOptions) {
+            if (countyOptions[county].textContent === countyTitle) {
+                countyOptions[county].selected = true
+                break
+
+            }
+
+
+        }
+    }
+
+    function selectCurrentCategories(categoryList) {
+
+        let existingCheckboxes = document.getElementsByClassName('existingCategory')
+
+        for (individualCheckbox in existingCheckboxes) {
+            if (categoryList.includes(existingCheckboxes[individualCheckbox].value)) {
+                existingCheckboxes[individualCheckbox].checked = true
+            }
+        }
+
 
     }
 
@@ -110,6 +142,15 @@
     selectCurrentProvince(selectedProvince)
 
     populateProvinceCounties(selectedProvince)
+
+    selectCurrentCounty(selectedCounty)
+
+
+    selectCurrentCategories(existingSelectedCategories)
+
+
+    //setTimeout(selectCurrentCategories('a'), 3000);
+    setTimeout(function () { selectCurrentCounty(selectedCounty) }, 3000);
 
     provinceSelectField.addEventListener('change', (e) => {
         countyContainer.style.display = 'block'
