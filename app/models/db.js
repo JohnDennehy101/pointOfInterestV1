@@ -7,6 +7,7 @@ const Mongoose = require("mongoose");
 
 Mongoose.set("useNewUrlParser", true);
 Mongoose.set("useUnifiedTopology", true);
+Mongoose.set("useFindAndModify", false)
 
 Mongoose.connect(process.env.db);
 

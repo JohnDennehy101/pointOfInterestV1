@@ -146,9 +146,9 @@ const Monuments = {
         cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
       }
 
-      if (!Array.isArray(categories) && categories !== "") {
-        categories = [categories];
-      }
+      // if (!Array.isArray(categories) && categories !== "") {
+      //   categories = [categories];
+      // }
 
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
       const provinceCategoryRef = await Category.find({ title: request.payload.province });
@@ -193,8 +193,14 @@ const Monuments = {
       await newMonument.save();
 
       //Other Categories code
-
-      if (!Array.isArray(categories) && categories !== "") {
+      console.log('categories length')
+      console.log(typeof categories)
+      console.log(typeof categories == undefined)
+      console.log(typeof categories == 'undefined')
+      console.log(categories)
+    
+      if (!Array.isArray(categories) && typeof categories != 'undefined') {
+        console.log("NOT ARRAY")
         let categoryQuery = await Category.find({
           $and: [{ title: categories }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
         });
@@ -216,7 +222,13 @@ const Monuments = {
           categoryQuery[0].monuments.push(monumentId);
           await categoryQuery[0].save();
         }
+        console.log('WTF')
+        console.log(categories)
+        console.log(typeof categories)
+        //console.log(categories.length)
+       
       } else if (Array.isArray(categories)) {
+        console.log("COMPUTED AS ARRAY")
         let categoryQuery = await Category.find({
           $and: [{ title: { $in: categories } }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
         });
@@ -313,6 +325,7 @@ const Monuments = {
     handler: async function (request, h) {
       const monumentEdit = request.payload;
       let categories = request.payload.category;
+      console.log('start of edit flow')
       let newCategoryObjectIds = [];
 
       const image = await monumentEdit.imageUpload;
@@ -342,7 +355,10 @@ const Monuments = {
       const monument = await Monument.findById(request.params.id);
       let monumentId = monument._id;
 
-      const otherCategories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
+
+      if (Array.isArray(categories)) {
+
+        const otherCategories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
 
       console.log(otherCategories)
       for (let singleCategory in otherCategories) {
@@ -351,14 +367,47 @@ const Monuments = {
         let existingCategoryCheck = await Category.find({ title: otherCategories[singleCategory].title }).lean();
         console.log(existingCategoryCheck)
         console.log('lenght of query result' + existingCategoryCheck.length)
+
         if (existingCategoryCheck.length > 0 && !categories.includes(otherCategories[singleCategory].title)) {
           let deleteMonumentFromCategory = await Category.updateOne({ title: otherCategories[singleCategory].title }, {$pull: {monuments: {$in: [monumentId]} } }).lean();
           console.log('trying to remove monument from category')
           // await deleteMonumentFromCategory.save()
           console.log(deleteMonumentFromCategory)
         }
+        else if (existingCategoryCheck.length > 0 && categories.includes(otherCategories[singleCategory].title)) {
+          existingCategoryCheck[0].monuments.push(monumentId);
+          console.log('this category has not been updated by the user')
+          console.log(otherCategories[singleCategory].title)
+        }
 
       }
+      console.log(categories == undefined)
+      console.log(categories === undefined)
+      console.log(categories === [])
+      } else if (!Array.isArray(categories) && categories !== '') {
+        for (let categoryId in monument.categories) {
+          //console.log('category ids')
+          console.log(categoryId)
+          if (categoryId === 0){
+            //console.log('trying to skip province id')
+            //console.log(monument.categories[0])
+            continue
+          }
+          //monument.categories.pop()
+          console.log(monument.categories)
+        }
+      }
+
+
+      // console.log('went through monument categories')
+      console.log(monument)
+
+      
+
+
+      const testCategories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
+      // console.log('Categories after looping through each to check if changes made to categories')
+      console.log(testCategories)
 
       if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
         cloudinaryPromise = async_func(imageBuffer);
@@ -377,10 +426,49 @@ const Monuments = {
 
           //Other Categories code
 
-      if (!Array.isArray(categories) && categories !== "") {
-        let categoryQuery = await Category.find({
-          $and: [{ title: categories }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
-        });
+          console.log(categories)
+          console.log('type of categories')
+          console.log(typeof categories)
+
+      if (!Array.isArray(categories) && categories !== undefined) {
+        // let categoryQuery = await Category.find({
+        //   $and: [{ title: categories }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
+        // });
+        console.log('length of monument categories')
+        console.log(monument.categories.length)
+        
+          for (let categoryId in monument.categories) {
+             console.log(categoryId == '0')
+            
+             //Commenting out as user can change province
+            // if (categoryId === '0') {
+            //   console.log(categoryId)
+            //   console.log('skipping first id')
+            //   continue
+            // }
+            console.log('monument category title')
+          console.log(monument.categories[categoryId])
+          let previousCategoryQuery = await Category.findOneAndUpdate({ _id: monument.categories[categoryId]}, { $pull: { monuments: { $in: [monumentId] } } })
+          console.log('after deleting monument id in a category')
+          console.log(previousCategoryQuery)
+
+           
+          }
+          
+
+        
+
+        // console.log(request.payload.province)
+        // let provinceQuery = await Category.updateOne({title: request.payload.province}, { $push: { monuments: { $in: [monumentId] } } })
+        // console.log(provinceQuery)
+        //provinceQuery.monuments.push(provinceQuery._id)
+        //await provinceQuery.save()
+      
+        let categoryQuery = await Category.find({ title: categories });
+
+        
+
+        
         console.log(categoryQuery);
         if (categoryQuery.length === 0) {
           let singleNewCategory = new Category({
@@ -396,10 +484,13 @@ const Monuments = {
           console.log(categoryQuery[0]);
           console.log(categoryQuery[0].monuments);
           newCategoryObjectIds.push(categoryQuery[0]._id)
-          //categoryQuery[0].monuments.push(monumentId);
-         // await categoryQuery[0].save();
+          categoryQuery[0].monuments.push(monumentId);
+         await categoryQuery[0].save();
         }
-      } else if (Array.isArray(categories)) {
+        console.log(categories == undefined)
+        console.log(categories === undefined)
+        console.log('key line is here')
+      } else if (Array.isArray(categories) && categories.length > 0) {
         let categoryQuery = await Category.find({
           $and: [{ title: { $in: categories } }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
         });
@@ -451,12 +542,13 @@ const Monuments = {
 
 
 
-
+      console.log('monument category ids');
+      console.log(newCategoryObjectIds)
       monument.title = monumentEdit.title;
       monument.description = monumentEdit.description;
       monument.user = monumentEdit._id;
       monument.image = cloudinarySecureUrlPromiseResolved;
-      monument.categories = []
+      monument.categories = [monument.categories[0]]
 
       await monument.save()
       console.log(monument)
@@ -465,6 +557,7 @@ const Monuments = {
         for (let id in newCategoryObjectIds) {
         console.log(newCategoryObjectIds[id])
         monument.categories.push(newCategoryObjectIds[id])
+        console.log("just pushed category id to monument")
       }
     }
 
