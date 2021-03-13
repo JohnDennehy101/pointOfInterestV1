@@ -76,8 +76,8 @@ const Monuments = {
         province: Joi.string().required(),
         county: Joi.string().required(),
         category: Joi.any(),
-        latitude: Joi.number.required(),
-        longitude: Joi.number.required()
+        latitude: Joi.number().required(),
+        longitude: Joi.number().required(),
       },
       failAction: function (request, h, error) {
         return h
@@ -147,6 +147,9 @@ const Monuments = {
         image: cloudinarySecureUrlPromiseResolved,
         province: request.payload.province,
         county: request.payload.county,
+        coordinates: {'latitude': request.payload.latitude, 'longitude': request.payload.longitude} 
+       // [request.payload.latitude, request.payload.longitude]
+        
       });
       await newMonument.save();
       console.log(newMonument);
@@ -312,8 +315,8 @@ const Monuments = {
         province: Joi.string().required(),
         county: Joi.string().required(),
         category: Joi.any(),
-        latitude: Joi.number.required(),
-        longitude: Joi.number.required()
+        latitude: Joi.number().required(),
+        longitude: Joi.number().required()
       },
       failAction: function (request, h, error) {
         return h
@@ -480,6 +483,8 @@ const Monuments = {
       monument.user = monumentEdit._id;
       monument.image = cloudinarySecureUrlPromiseResolved;
       monument.categories = [monument.categories[0]];
+      monument.latitude = monumentEdit.latitude,
+      monument.longitude = monumentEdit.longitude
 
       await monument.save();
       console.log(monument);

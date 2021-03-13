@@ -10,8 +10,10 @@ const monumentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  latitude: Number,
-  longitude: Number,
+  coordinates: {
+    latitude: Number,
+    longitude: Number
+  },
   categories: [
     {
       type: Schema.Types.ObjectId,

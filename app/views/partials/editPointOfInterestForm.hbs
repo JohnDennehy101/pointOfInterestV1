@@ -37,6 +37,26 @@
                 </select>
             </div>
 
+
+            <div class="uk-margin" uk-grid>
+
+                <div class="uk-width-1-2@m">
+                    <label class="uk-form-label" for="form-stacked-text">Latitude</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-stacked-text" type="number" step=".01" name="latitude"
+                            placeholder="Enter Monument Latitude" value='{{monument.coordinates.latitude}}' />
+                    </div>
+                </div>
+                <div class="uk-width-1-2@m">
+                    <label class="uk-form-label" for="form-stacked-text">Longitude</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-stacked-text" type="number" step=".01" name="longitude"
+                            placeholder="Enter Monument Longitude" value='{{monument.coordinates.longitude}}' />
+                    </div>
+                </div>
+
+            </div>
+
             <div class="uk-margin" id="categoryDivContainer">
                 <div class="uk-form-label" id="existingCategoriesParent">Existing Categories</div>
                 {{#each categories}}
