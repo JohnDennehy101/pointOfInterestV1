@@ -76,6 +76,8 @@ const Monuments = {
         province: Joi.string().required(),
         county: Joi.string().required(),
         category: Joi.any(),
+        latitude: Joi.number.required(),
+        longitude: Joi.number.required()
       },
       failAction: function (request, h, error) {
         return h
@@ -92,29 +94,8 @@ const Monuments = {
       const data = request.payload;
       let categories = request.payload.category;
       let newCategoryObjectIds = [];
-      console.log(Array.isArray(categories));
-      // if (Array.isArray(categories) && categories.length > 1) {
-      //   console.log('working to here')
-      // let categoryQuery = await Category.find({ $and: [ {title: {$in: [categories]}}, {title: {$nin: ['Munster', 'Ulster', 'Connacht', 'Leinster']}}]}, {title: 1});
-
-      // console.log(categoryQuery)
-      // if (categoryQuery.length !== categories.length) {
-      //   console.log(categories)
-      // for (let categoryTitle in categories) {
-      //   let test = new Category({
-      //           title: categories[categoryTitle],
-      //           monuments: [],
-      //         });
-
-      //         console.log(test)
-
-      //         await test.save()
-      //         newCategoryObjectIds.push(test._id)
-      // }
-      // console.log(newCategoryObjectIds)
-      // }
-
-      // }
+      
+     
 
       console.log(data);
 
@@ -322,6 +303,27 @@ const Monuments = {
       allow: "multipart/form-data",
       maxBytes: 2 * 1000 * 1000,
       multipart: true,
+    },
+     validate: {
+      payload: {
+        title: Joi.string().required(),
+        description: Joi.string().required(),
+        imageUpload: Joi.any(),
+        province: Joi.string().required(),
+        county: Joi.string().required(),
+        category: Joi.any(),
+        latitude: Joi.number.required(),
+        longitude: Joi.number.required()
+      },
+      failAction: function (request, h, error) {
+        return h
+          .view("home", {
+            title: "Error adding Monument",
+            errors: error.details,
+          })
+          .takeover()
+          .code(400);
+      },
     },
     handler: async function (request, h) {
       const monumentEdit = request.payload;
