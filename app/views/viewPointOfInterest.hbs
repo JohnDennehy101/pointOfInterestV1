@@ -7,7 +7,7 @@
 
 <h1 class="uk-heading-medium uk-text-center">{{monument.title}}</h1>
 
-<div class="uk-container uk-margin-top">
+<div class="uk-container uk-margin">
     <div class="uk-text-center uk-grid">
         <div class="uk-width-expand@m uk-first-column">
 
@@ -30,52 +30,135 @@
                 </div>
 
                 <div class="uk-width-1-2@m">
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+                        <h4 class="uk-text-primary">GPS Coordinates</h4>
+                        <table class="uk-table uk-table-small">
+                            <tbody>
+                                <tr>
+                                    <td>Latitude</td>
+                                    <td>{{monument.coordinates.latitude}}</td>
+
+                                </tr>
+                                <tr>
+
+                                    <td>Longitude</td>
+                                    <td>{{monument.coordinates.longitude}}</td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+                    </div>
+
 
                 </div>
+
+
             </div>
+
+
+
+            <div class="uk-text-center uk-text-small uk-margin uk-width-expand@m">
+                <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+                    <h4 class="uk-text-primary">Current Weather</h4>
+                    <div class="uk-child-width-expand@s uk-text-center" uk-grid>
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-body">
+                                <h5>Overview</h5>
+
+                                <img src="../images/rain.png" width="50">
+
+                                <p>Raining</p>
+
+                            </div>
+                        </div>
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-body">
+                                <h5>Temperature</h5>
+
+                                <img src="../images/thermometer.png" width="50">
+
+                                <p>Raining</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="uk-card uk-card-default uk-card-body">
+                                <h5>Sunset</h5>
+
+                                <img src="../images/sunrise.png" width="50">
+
+                                <p>Raining</p>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="uk-table uk-table-divider">
+                        <thead>
+                            <tr>
+                                <th class="uk-text-center">Metric</th>
+                                <th class="uk-text-center">Value</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Table Data</td>
+                                <td>Lorem ipsum .</td>
+
+
+                            </tr>
+                            <tr>
+                                <td>Table Data</td>
+                                <td>Lorem ip</td>
+
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+            <div class="uk-text-center uk-text-small uk-margin uk-width-expand@m">
+                <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+                    <h4 class="uk-text-primary">Weather Forecast</h4>
+                    <table class="uk-table uk-table-divider">
+                        <thead>
+                            <tr>
+                                <th class="uk-text-center">Day</th>
+                                <th class="uk-text-center">Overview</th>
+                                <th class="uk-text-center">Description</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Table Data</td>
+                                <td>Lorem ipsum .</td>
+                                <td>gjfjfj</td>
+
+                            </tr>
+                            <tr>
+                                <td>Table Data</td>
+                                <td>Lorem ip</td>
+                                <td>gjfjfj</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
 
         </div>
 
         <div class="uk-width-1-3@m">
 
             <div class="uk-container">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam orci mi, auctor ut orci vitae, cursus
-                mollis ex. Nulla
-                facilisi. Duis vitae ligula eu turpis dapibus commodo. Nullam nisl metus, auctor a scelerisque in,
-                facilisis vel felis.
-                Quisque vestibulum rhoncus risus vel venenatis. Mauris sed ultrices justo. Sed ornare eros id mi
-                eleifend, id finibus
-                dolor iaculis. Nunc faucibus neque non arcu pretium, lacinia luctus ipsum egestas. Suspendisse
-                varius neque ac elit
-                ultricies, quis aliquam lectus ornare. Aliquam erat volutpat. Curabitur orci ipsum, tristique sed
-                dolor quis, lobortis
-                rhoncus lacus. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-
-                Pellentesque tempus metus ac magna scelerisque dapibus. Praesent ultrices neque non volutpat dictum.
-                Integer id massa
-                sit amet turpis aliquet blandit vitae id tellus. Mauris pretium auctor risus id rutrum. Morbi
-                rhoncus, libero vel
-                interdum accumsan, risus est luctus turpis, ac lobortis elit erat ac quam. Interdum et malesuada
-                fames ac ante ipsum
-                primis in faucibus. Etiam rutrum lobortis nibh, at viverra nibh dictum ac. Nulla a cursus neque, a
-                hendrerit magna.
-                Vivamus ut massa eros. Mauris placerat convallis dui vel condimentum. Nam quis neque efficitur,
-                tempor odio eu, posuere
-                turpis.
-
-                Maecenas sed tincidunt felis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce
-                turpis odio, auctor
-                vitae enim quis, condimentum volutpat massa. Nunc consectetur mi commodo eros accumsan condimentum.
-                Pellentesque
-                eleifend quam dapibus augue dictum mattis. Etiam mattis ut eros nec accumsan. Cras dapibus ultrices
-                lectus, at congue
-                eros pharetra quis. Maecenas sodales dolor vel neque facilisis convallis. Proin ullamcorper at eros
-                ac iaculis.
-                Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse
-                tellus purus,
-                scelerisque quis pellentesque vitae, egestas ut nibh. Phasellus id porta eros. Donec hendrerit quis
-                augue non tristique.
-                Morbi ullamcorper consequat arcu, venenatis consequat sem. Duis pharetra nisi non neque.
+                {{monument.description}}
             </div>
 
 
