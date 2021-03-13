@@ -357,8 +357,8 @@ const Monuments = {
       let monumentId = monument._id;
 
 
-       let testResult = await Category.updateMany({ $pull: { monuments: { $in: [monument._id] } } });
-       console.log(testResult)
+       let pullAllExistingCategories = await Category.updateMany({ $pull: { monuments: { $in: [monument._id] } } });
+       console.log(pullAllExistingCategories)
 
        console.log('Trying approach of pulling all pre-existing ids before updating')
 
@@ -383,20 +383,13 @@ const Monuments = {
         console.log('lenght of query result' + existingCategoryCheck.length)
 
 
-        //Commenting out for now as approach where all ids are first pulled being tested
-        // if (existingCategoryCheck.length > 0 && !categories.includes(otherCategories[singleCategory].title)) {
-        //   let deleteMonumentFromCategory = await Category.updateOne({ title: otherCategories[singleCategory].title }, {$pull: {monuments: {$in: [monumentId]} } }).lean();
-        //   console.log('trying to remove monument from category')
-         
-        //   console.log(deleteMonumentFromCategory)
-        // }
+        
         if (existingCategoryCheck.length > 0 && categories.includes(otherCategories[singleCategory].title)) {
           existingCategoryCheck[0].monuments.push(monumentId);
-          //Test line
+          
           console.log('Existing Categories')
           console.log(existingCategoryCheck)
           let updateExistingCategory = await Category.updateOne({title: existingCategoryCheck[0].title}, { $push: { monuments: monumentId } })
-          //let testGreat = await Category.findByIdAndUpdate(existingCategoryCheck[0]._id)
           console.log(updateExistingCategory)
 
           //Pushing id here as it will be gone
@@ -413,9 +406,6 @@ const Monuments = {
       }
 
 
-
-
-
        for (let individualCategory in categories) {
             console.log("Checking each individual category");
             let existingCategoryCheck = await Category.find({ title: categories[individualCategory] });
@@ -427,10 +417,7 @@ const Monuments = {
             console.log(existingCategoryCheck.length);
 
             if (existingCategoryCheck.length === 1) {
-              //existingCategoryCheck[0].monuments.push(monumentId);
-              //newCategoryObjectIds.push(existingCategoryCheck[0]._id)
-              //console.log("pushing to existing category");
-              //await existingCategoryCheck[0].save();
+            
             } else {
               let singleNewCategory = new Category({
                 title: categories[individualCategory],
@@ -446,48 +433,49 @@ const Monuments = {
           }
 
 
+      } 
 
+        //Other Categories code
+
+          console.log(categories)
+          console.log('type of categories')
+          console.log(typeof categories)
+
+      if (!Array.isArray(categories) && categories !== undefined) {
+        
+        console.log('Printing category that was checked')
+        console.log(categories)
+        let categoryQuery = await Category.find({ title: categories });
 
         
 
-      
-      
+        
+        console.log(categoryQuery);
+        if (categoryQuery.length === 0) {
+          let singleNewCategory = new Category({
+            title: categories,
+            monuments: [monumentId],
+          });
 
-
-
-
-
-
-
-
-
-      console.log(categories == undefined)
-      console.log(categories === undefined)
-      console.log(categories === [])
-      } else if (!Array.isArray(categories) && categories !== '') {
-        for (let categoryId in monument.categories) {
-          //console.log('category ids')
-          console.log(categoryId)
-          if (categoryId === 0){
-            //console.log('trying to skip province id')
-            //console.log(monument.categories[0])
-            continue
-          }
-          //monument.categories.pop()
-          console.log(monument.categories)
+          await singleNewCategory.save();
+          console.log('added single new category')
+          newCategoryObjectIds.push(singleNewCategory._id)
+          console.log(singleNewCategory);
+        } else {
+          console.log("Trying to add value to existing category");
+          console.log(categoryQuery[0]);
+          console.log(categoryQuery[0].monuments);
+          newCategoryObjectIds.push(categoryQuery[0]._id)
+          categoryQuery[0].monuments.push(monumentId);
+         await categoryQuery[0].save();
         }
-      }
+        
+       } 
 
 
-      // console.log('went through monument categories')
-      console.log(monument)
+  
 
-      
-
-
-      const testCategories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
-      // console.log('Categories after looping through each to check if changes made to categories')
-      console.log(testCategories)
+     
 
       if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
         cloudinaryPromise = async_func(imageBuffer);
@@ -504,118 +492,7 @@ const Monuments = {
 
 
 
-          //Other Categories code
-
-          console.log(categories)
-          console.log('type of categories')
-          console.log(typeof categories)
-
-      if (!Array.isArray(categories) && categories !== undefined) {
-        // let categoryQuery = await Category.find({
-        //   $and: [{ title: categories }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
-        // });
-        console.log('length of monument categories')
-        console.log(monument.categories.length)
         
-          for (let categoryId in monument.categories) {
-             console.log(categoryId == '0')
-            
-             //Commenting out as user can change province
-            // if (categoryId === '0') {
-            //   console.log(categoryId)
-            //   console.log('skipping first id')
-            //   continue
-            // }
-            console.log('monument category title')
-          console.log(monument.categories[categoryId])
-          let previousCategoryQuery = await Category.findOneAndUpdate({ _id: monument.categories[categoryId]}, { $pull: { monuments: { $in: [monumentId] } } })
-          console.log('after deleting monument id in a category')
-          console.log(previousCategoryQuery)
-
-           
-          }
-          
-
-        
-
-        // console.log(request.payload.province)
-        // let provinceQuery = await Category.updateOne({title: request.payload.province}, { $push: { monuments: { $in: [monumentId] } } })
-        // console.log(provinceQuery)
-        //provinceQuery.monuments.push(provinceQuery._id)
-        //await provinceQuery.save()
-      
-        let categoryQuery = await Category.find({ title: categories });
-
-        
-
-        
-        console.log(categoryQuery);
-        if (categoryQuery.length === 0) {
-          let singleNewCategory = new Category({
-            title: categories,
-            monuments: [monumentId],
-          });
-
-          await singleNewCategory.save();
-          newCategoryObjectIds.push(singleNewCategory._id)
-          console.log(singleNewCategory);
-        } else {
-          console.log("Trying to add value to existing category");
-          console.log(categoryQuery[0]);
-          console.log(categoryQuery[0].monuments);
-          newCategoryObjectIds.push(categoryQuery[0]._id)
-          categoryQuery[0].monuments.push(monumentId);
-         await categoryQuery[0].save();
-        }
-        console.log(categories == undefined)
-        console.log(categories === undefined)
-        console.log('key line is here')
-      } else if (Array.isArray(categories) && categories.length > 0) {
-        let categoryQuery = await Category.find({
-          $and: [{ title: { $in: categories } }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
-        });
-
-        console.log("Category Query length" + categoryQuery);
-        if (categoryQuery.length === categories.length) {
-          console.log("Lenght of result is same as category");
-          for (let individualCategory in categoryQuery) {
-            console.log("Looping through results, trying to append objectIds to exsiting categories");
-            //categoryQuery[individualCategory].monuments.push(monumentId);
-             newCategoryObjectIds.push(categoryQuery[individualCategory]._id)
-            //categoryQuery[individualCategory].save();
-          }
-        } else if (categoryQuery.length !== categories.length) {
-          // console.log("Length of result is not same as category");
-          // for (let individualCategory in categories) {
-          //   console.log("Checking each individual category");
-          //   let existingCategoryCheck = await Category.find({ title: categories[individualCategory] });
-
-          //   console.log(existingCategoryCheck);
-
-          //   console.log("Lenght of result" + existingCategoryCheck.length);
-          //   console.log(existingCategoryCheck[0]);
-          //   console.log(existingCategoryCheck.length);
-
-          //   if (existingCategoryCheck.length === 1) {
-          //     //existingCategoryCheck[0].monuments.push(monumentId);
-          //     newCategoryObjectIds.push(existingCategoryCheck[0]._id)
-          //     console.log("pushing to existing category");
-          //     //await existingCategoryCheck[0].save();
-          //   } else {
-          //     let singleNewCategory = new Category({
-          //       title: categories[individualCategory],
-          //       monuments: [monumentId],
-          //     });
-
-          //     await singleNewCategory.save();
-          //     newCategoryObjectIds.push(singleNewCategory._id)
-          //     console.log("pushing to new category");
-          //     console.log("Just added new category");
-          //     console.log(singleNewCategory);
-          //   }
-          // }
-        }
-      }
 
 
 
