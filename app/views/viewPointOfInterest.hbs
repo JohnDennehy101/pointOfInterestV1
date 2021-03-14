@@ -79,7 +79,7 @@
 
                                 <img src="../images/thermometer.png" width="50">
 
-                                <p>Raining</p>
+                                <p>{{currentWeather.temp}}</p>
                             </div>
                         </div>
                         <div>
@@ -102,18 +102,15 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{#each currentWeatherFormattedObject}}
                             <tr>
-                                <td>Table Data</td>
-                                <td>Lorem ipsum .</td>
+                                <td>{{@key}}</td>
+                                <td>{{this}}</td>
 
 
                             </tr>
-                            <tr>
-                                <td>Table Data</td>
-                                <td>Lorem ip</td>
+                            {{/each}}
 
-
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -134,18 +131,15 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{#each weatherForecastNextWeek}}
                             <tr>
-                                <td>Table Data</td>
-                                <td>Lorem ipsum .</td>
-                                <td>gjfjfj</td>
+                                <td>{{Date}}</td>
+                                <td>{{Summary}}</td>
+                                <td>{{Description}}</td>
 
                             </tr>
-                            <tr>
-                                <td>Table Data</td>
-                                <td>Lorem ip</td>
-                                <td>gjfjfj</td>
+                            {{/each}}
 
-                            </tr>
                         </tbody>
                     </table>
                 </div>
