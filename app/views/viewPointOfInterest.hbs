@@ -68,7 +68,7 @@
                                 <h5>Overview</h5>
 
                                 {{!-- <img src="../images/rain.png" width="50"> --}}
-                                <img src="http://openweathermap.org/img/wn/10n@2x.png" width="60" />
+                                <img src="" id="weatherDescriptionIcon" width="50" />
 
                                 <p>{{currentWeatherDescription}}</p>
 
@@ -163,6 +163,28 @@
 
 
 <script>
-    let test = '{{currentWeather}}'
-    console.log(test)
+    let currentWeatherDescription = '{{currentWeatherDescription}}'
+    let weatherDescriptionIcon = document.getElementById('weatherDescriptionIcon')
+
+    if (currentWeatherDescription == 'Drizzle' || currentWeatherDescription == 'Rain' || currentWeatherDescription == 'Mist') {
+        weatherDescriptionIcon.src = '../images/rain.png'
+
+    }
+    else if (currentWeatherDescription == 'Snow') {
+        weatherDescriptionIcon.src = '../images/snowflake.png'
+    }
+    else if (currentWeatherDescription == 'Clouds' || currentWeatherDescription == 'Fog') {
+        weatherDescriptionIcon.src = '../images/cloud.png'
+
+    }
+    else if (currentWeatherDescription == 'Thunderstorm') {
+
+        weatherDescriptionIcon.src = '../images/umbrella.png'
+    }
+    else if (currentWeatherDescription == 'Clear') {
+        weatherDescriptionIcon.src = '../images/sun.png'
+    }
+    else {
+        weatherDescriptionIcon.src = '../images/sun.png'
+    }
 </script>
