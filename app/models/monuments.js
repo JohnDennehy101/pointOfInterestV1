@@ -12,7 +12,7 @@ const monumentSchema = new Schema({
   },
   coordinates: {
     latitude: Number,
-    longitude: Number
+    longitude: Number,
   },
   categories: [
     {
