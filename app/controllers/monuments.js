@@ -53,7 +53,7 @@ const Monuments = {
   viewMonument: {
     handler: async function (request, h) {
       const monument = await Monument.findById(request.params.id).populate("categories").lean();
-      let weatherData, currentWeather, dailyWeather, formattedSunsetTime, currentWeatherFormattedObject, currentWeatherDescription;
+      let weatherData, currentWeather, dailyWeather, formattedSunsetTime, currentWeatherFormattedObject, currentWeatherDescription, weatherAvailable;
       let weatherForecastNextWeek = []
 
       const apiWeatherRequest = await axios.get(
@@ -61,6 +61,7 @@ const Monuments = {
       );
 
       if (apiWeatherRequest.status == 200) {
+        weatherAvailable = true
         weatherData = apiWeatherRequest.data;
         currentWeather = weatherData.current;
         currentWeatherDescription = currentWeather.weather[0].main
@@ -105,6 +106,7 @@ const Monuments = {
         };
       }
       else {
+        weatherAvailable = false
         currentWeather = undefined
         currentWeatherFormattedObject = undefined
         weatherForecastNextWeek = undefined
@@ -123,6 +125,7 @@ const Monuments = {
         currentWeatherDescription: currentWeatherDescription,
         weatherForecastNextWeek: weatherForecastNextWeek,
         sunset: formattedSunsetTime,
+        weatherAvailable: weatherAvailable
 
       });
     },
