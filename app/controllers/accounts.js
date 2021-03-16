@@ -83,6 +83,11 @@ const Accounts = {
       let now = new Date();
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
+      let adminUser = false
+
+      if (user.userType === 'Admin') {
+        adminUser = true
+      }
 
       if (user) {
         if (user.lastUpdated !== null) {
@@ -101,6 +106,7 @@ const Accounts = {
         user: user,
         successNotification: showUpdatedNotification,
         lastUpdated: user.lastUpdated,
+        adminUser: adminUser
       });
     },
   },

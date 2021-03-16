@@ -9,6 +9,12 @@
     <a href="/settings" method="GET" class="uk-card uk-card-small uk-card-hover uk-padding-small">
         <i class="fas fa-sliders-h fa-3x"></i>
     </a>
+    {{#if adminUser}}
+    <a href="/adminDashboard" method="GET" class="uk-card uk-card-small uk-card-hover uk-padding-small">
+        <i class="fas fa-chart-line fa-3x" title="Analytics" style="color:rgb(156, 122, 70)" pos="bottom"
+            uk-tooltip></i>
+    </a>
+    {{/if}}
     <a href="/logout" class="uk-card uk-card-small uk-card-hover uk-padding-small">
         <i class="fas fa-sign-out-alt fa-3x" style="color:rgb(156, 70, 128)" title="Logout" pos="bottom" uk-tooltip></i>
     </a>

@@ -27,13 +27,29 @@ const handleFileUpload = (file) => {
 const Monuments = {
   home: {
     handler: async function (request, h) {
+
+      const id = request.auth.credentials.id;
+      const user = await User.findById(id).lean();
+      let adminUser = false
+
+      if (user.userType === 'Admin') {
+        adminUser = true
+      }
       const categories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
+      
       console.log(categories);
-      return h.view("home", { title: "Add a monument", categories: categories });
+      return h.view("home", { title: "Add a monument", categories: categories, adminUser: adminUser });
     },
   },
   report: {
     handler: async function (request, h) {
+      const id = request.auth.credentials.id;
+      const user = await User.findById(id).lean();
+      let adminUser = false
+
+      if (user.userType === 'Admin') {
+        adminUser = true
+      }
       const monuments = await Monument.find().populate("user").lean();
       const provinceCategories = await Category.find({ title: { $in: ["Munster", "Leinster", "Connacht", "Ulster"] } })
         .populate("monuments")
@@ -47,11 +63,20 @@ const Monuments = {
         monuments: monuments,
         provinceCategories: provinceCategories,
         otherCategories: otherCategories,
+        adminUser: adminUser
       });
     },
   },
   viewMonument: {
     handler: async function (request, h) {
+      const id = request.auth.credentials.id;
+      const user = await User.findById(id).lean();
+      let adminUser = false
+
+      if (user.userType === 'Admin') {
+        adminUser = true
+      }
+
       const monument = await Monument.findById(request.params.id).populate("categories").lean();
       let weatherData,
         currentWeather,
@@ -151,6 +176,7 @@ const Monuments = {
         weatherForecastNextWeek: weatherForecastNextWeek,
         sunset: formattedSunsetTime,
         weatherAvailable: weatherAvailable,
+        adminUser: adminUser
       });
     },
   },
@@ -372,6 +398,15 @@ const Monuments = {
 
   editMonumentView: {
     handler: async function (request, h) {
+      const id = request.auth.credentials.id;
+      const user = await User.findById(id).lean();
+      let adminUser = false
+
+      if (user.userType === 'Admin') {
+        adminUser = true
+      }
+
+
       const monument = await Monument.findById(request.params.id).populate("categories").lean();
       let selectedCategories = monument.categories;
       let selectedCategoryTitles = [];
@@ -388,6 +423,7 @@ const Monuments = {
         monument: monument,
         categories: categories,
         selectedCategories: selectedCategoryTitles,
+        adminUser: adminUser
       });
     },
   },
