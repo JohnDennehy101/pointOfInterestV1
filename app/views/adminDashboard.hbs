@@ -2,3 +2,42 @@
     {{> title-card title="Admin User" subTitle="Admin Dashboard"}}
     {{> main-menu }}
 </div>
+
+<div class="uk-container uk-margin">
+
+    <div class="uk-width-expand@m">
+        <h1 class="uk-heading">Application Overview</h1>
+    </div>
+
+
+    <div class="uk-divider-icon"></div>
+
+    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+        <h4 class="uk-text-primary uk-text-center">User Overview</h4>
+        <table class="uk-table uk-table-divider">
+            <thead>
+                <tr>
+                    <th class="uk-text-center" style="width: 33.33%">User Name</th>
+                    <th class="uk-text-center" style="width: 33.33%">Number of Existing Records</th>
+                    <th class="uk-text-center" style="width: 33.33%">Last Login</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    {{#each allUsers}}
+                    <td class="uk-text-center" style="width: 33.33%">{{firstName}} {{lastName}}</td>
+                    <td class="uk-text-center" style="width: 33.33%">{{numberOfRecords}}</td>
+                    <td class="uk-text-center" style="width: 33.33%">v</td>
+
+                    {{/each}}
+
+                </tr>
+
+
+            </tbody>
+        </table>
+    </div>
+
+</div>

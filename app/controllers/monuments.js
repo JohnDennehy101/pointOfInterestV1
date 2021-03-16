@@ -258,6 +258,7 @@ const Monuments = {
       const provinceCategoryRef = await Category.find({ title: request.payload.province });
       const id = request.auth.credentials.id;
       const user = await User.findById(id);
+      const existingRecordCount = user.numberOfRecords;
       const newMonument = new Monument({
         title: request.payload.title,
         description: request.payload.description,
@@ -270,7 +271,10 @@ const Monuments = {
         // [request.payload.latitude, request.payload.longitude]
       });
       await newMonument.save();
+
       console.log(newMonument);
+      user.numberOfRecords = existingRecordCount + 1
+      await user.save()
       console.log("Working till after saving monument");
 
       //Adding province category
@@ -634,12 +638,21 @@ const Monuments = {
   },
   deleteMonument: {
     handler: async function (request, h) {
+      const id = request.auth.credentials.id;
+      const user = await User.findById(id);
+      const existingRecordCount = user.numberOfRecords;
+
+      if (existingRecordCount > 0) {
+        user.numberOfRecords = existingRecordCount - 1
+      }
+
+      await user.save()
+
       const recordId = request.params.id;
       await Monument.deleteOne({ _id: recordId });
       //const monumentRecord = await Monument.findById({ _id: recordId })
       await Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
-      let test = await Category.find();
-      console.log(test);
+      
 
       return h.redirect("/report");
     },

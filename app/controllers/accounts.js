@@ -67,6 +67,7 @@ const Accounts = {
           password: payload.password,
           userType: accountType,
           lastUpdated: null,
+          numberOfRecords: 0
         });
         const user = await newUser.save();
         request.cookieAuth.set({ id: user.id });
@@ -149,6 +150,8 @@ const Accounts = {
   },
   showAdminDashboard: {
     handler: async function (request, h) {
+      const allUsers = await User.find().lean()
+
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
       let adminUser = false
@@ -156,7 +159,7 @@ const Accounts = {
       if (user.userType === 'Admin') {
         adminUser = true
       }
-      return h.view("adminDashboard", {adminUser: adminUser})
+      return h.view("adminDashboard", {adminUser: adminUser, allUsers: allUsers})
     }
   },
   deleteAccount: {
