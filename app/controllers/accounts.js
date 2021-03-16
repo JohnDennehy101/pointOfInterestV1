@@ -24,7 +24,7 @@ const Accounts = {
         lastName: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
-        userType: Joi.string()
+        userType: Joi.string(),
       },
       failAction: function (request, h, error) {
         return h
@@ -46,19 +46,16 @@ const Accounts = {
         }
 
         const payload = request.payload;
-        const userType = payload.userType
-        console.log('User Type')
-        console.log(userType)
-        let accountType = 'User'
+        const userType = payload.userType;
+        console.log("User Type");
+        console.log(userType);
+        let accountType = "User";
 
         if (typeof userType !== "undefined") {
-
-          if (userType === 'Admin') {
-            accountType = 'Admin'
+          if (userType === "Admin") {
+            accountType = "Admin";
           }
-
         }
-
 
         const newUser = new User({
           firstName: payload.firstName,
@@ -67,7 +64,7 @@ const Accounts = {
           password: payload.password,
           userType: accountType,
           lastUpdated: null,
-          numberOfRecords: 0
+          numberOfRecords: 0,
         });
         const user = await newUser.save();
         request.cookieAuth.set({ id: user.id });
@@ -84,10 +81,10 @@ const Accounts = {
       let now = new Date();
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      let adminUser = false
+      let adminUser = false;
 
-      if (user.userType === 'Admin') {
-        adminUser = true
+      if (user.userType === "Admin") {
+        adminUser = true;
       }
 
       if (user) {
@@ -107,7 +104,7 @@ const Accounts = {
         user: user,
         successNotification: showUpdatedNotification,
         lastUpdated: user.lastUpdated,
-        adminUser: adminUser
+        adminUser: adminUser,
       });
     },
   },
@@ -118,7 +115,7 @@ const Accounts = {
         lastName: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
-        userType: Joi.string()
+        userType: Joi.string(),
       },
       failAction: function (request, h, error) {
         return h
@@ -138,7 +135,7 @@ const Accounts = {
       user.lastName = userEdit.lastName;
       user.email = userEdit.email;
       user.password = userEdit.password;
-      user.userType = userEdit.userType
+      user.userType = userEdit.userType;
       let now = new Date();
       user.lastUpdated = now.getTime();
       await user.save();
@@ -150,17 +147,17 @@ const Accounts = {
   },
   showAdminDashboard: {
     handler: async function (request, h) {
-      const allUsers = await User.find().lean()
+      const allUsers = await User.find().lean();
 
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      let adminUser = false
+      let adminUser = false;
 
-      if (user.userType === 'Admin') {
-        adminUser = true
+      if (user.userType === "Admin") {
+        adminUser = true;
       }
-      return h.view("adminDashboard", {adminUser: adminUser, allUsers: allUsers})
-    }
+      return h.view("adminDashboard", { adminUser: adminUser, allUsers: allUsers });
+    },
   },
   deleteAccount: {
     handler: async function (request, h) {
@@ -195,6 +192,54 @@ const Accounts = {
         }
         user.comparePassword(password);
         request.cookieAuth.set({ id: user.id });
+
+        const fullDateOptions = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+        };
+
+        //Method that formats the date and returns it with the time appended
+        function formatDateWithTime(currentDate) {
+          let month = currentDate.getMonth();
+          let months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+          let hour = ("0" + (currentDate.getHours())).slice(-2);
+          let formattedDate =
+            ("0" + currentDate.getDate()).slice(-2) +
+            "-" +
+            (months[month] +
+              "-" +
+              currentDate.getFullYear() +
+              " " +
+              hour +
+              ":" +
+              ("0" + currentDate.getMinutes()).slice(-2) +
+              ":" +
+              ("0" + currentDate.getSeconds()).slice(-2));
+
+          return formattedDate;
+        }
+        let now = new Date();
+        let lastLoginDateString = formatDateWithTime(now);
+        user.lastLogin = lastLoginDateString;
+        await user.save();
         return h.redirect("/home");
       } catch (err) {
         return h.view("login", { errors: [{ message: err.message }] });

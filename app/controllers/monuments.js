@@ -27,16 +27,15 @@ const handleFileUpload = (file) => {
 const Monuments = {
   home: {
     handler: async function (request, h) {
-
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      let adminUser = false
+      let adminUser = false;
 
-      if (user.userType === 'Admin') {
-        adminUser = true
+      if (user.userType === "Admin") {
+        adminUser = true;
       }
       const categories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
-      
+
       console.log(categories);
       return h.view("home", { title: "Add a monument", categories: categories, adminUser: adminUser });
     },
@@ -45,10 +44,10 @@ const Monuments = {
     handler: async function (request, h) {
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      let adminUser = false
+      let adminUser = false;
 
-      if (user.userType === 'Admin') {
-        adminUser = true
+      if (user.userType === "Admin") {
+        adminUser = true;
       }
       const monuments = await Monument.find().populate("user").lean();
       const provinceCategories = await Category.find({ title: { $in: ["Munster", "Leinster", "Connacht", "Ulster"] } })
@@ -63,7 +62,7 @@ const Monuments = {
         monuments: monuments,
         provinceCategories: provinceCategories,
         otherCategories: otherCategories,
-        adminUser: adminUser
+        adminUser: adminUser,
       });
     },
   },
@@ -71,10 +70,10 @@ const Monuments = {
     handler: async function (request, h) {
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      let adminUser = false
+      let adminUser = false;
 
-      if (user.userType === 'Admin') {
-        adminUser = true
+      if (user.userType === "Admin") {
+        adminUser = true;
       }
 
       const monument = await Monument.findById(request.params.id).populate("categories").lean();
@@ -87,76 +86,69 @@ const Monuments = {
         weatherAvailable;
       let weatherForecastNextWeek = [];
 
-
       async function getWeatherDetails() {
         try {
-        const apiWeatherRequest = await axios.get(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${monument.coordinates.latitude}&lon=${monument.coordinates.longitude}&units=metric&exclude=minutely,alerts&appid=${process.env.openweather_api_key}`
-      );
+          const apiWeatherRequest = await axios.get(
+            `https://api.openweathermap.org/data/2.5/onecall?lat=${monument.coordinates.latitude}&lon=${monument.coordinates.longitude}&units=metric&exclude=minutely,alerts&appid=${process.env.openweather_api_key}`
+          );
 
-      if (apiWeatherRequest.status == 200) {
-        return apiWeatherRequest.data
-      }
-      else {
-        return undefined
-      }
-      
-      }
-      catch (err) {
-        console.log('hitting error block')
-        //console.log(err)
-        return undefined
-      }
-    }
-
-      let weatherApiResponse = await getWeatherDetails()
-   
-          if (typeof weatherApiResponse !== 'undefined') {
-          weatherAvailable = true;
-          weatherData = weatherApiResponse
-          currentWeather = weatherData.current;
-          currentWeatherDescription = currentWeather.weather[0].main;
-          dailyWeather = weatherData.daily;
-          console.log(dailyWeather[0].weather[0].main);
-
-          const fullDateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-          const timeOptions = { hour: "numeric", minute: "numeric", second: "numeric" };
-
-          let sunsetDateObject = new Date(currentWeather.sunset * 1000);
-
-          formattedSunsetTime = sunsetDateObject.toLocaleString("en-IE", timeOptions);
-
-
-          for (let dailyForecast in dailyWeather) {
-            let dateObject = new Date(dailyWeather[dailyForecast].dt * 1000);
-
-            let dailyWeatherSummary = dailyWeather[dailyForecast].weather;
-            console.log(dailyWeatherSummary);
-
-            console.log(dateObject);
-
-            let formattedDate = dateObject.toLocaleString("en-IE", fullDateOptions);
-
-            let dayWeatherObject = {
-              Date: formattedDate,
-              Summary: dailyWeatherSummary[0]["main"],
-              Description: dailyWeatherSummary[0]["description"],
-            };
-
-            weatherForecastNextWeek.push(dayWeatherObject);
+          if (apiWeatherRequest.status == 200) {
+            return apiWeatherRequest.data;
+          } else {
+            return undefined;
           }
-
-          console.log(weatherForecastNextWeek);
-
-          currentWeatherFormattedObject = {
-            "Perceived Temperature": currentWeather["feels_like"],
-            Pressure: currentWeather["pressure"],
-            Humidity: currentWeather["humidity"],
-            "Wind Speed": currentWeather["wind_speed"],
-          };
+        } catch (err) {
+          console.log("hitting error block");
+          //console.log(err)
+          return undefined;
         }
-    
-      else {
+      }
+
+      let weatherApiResponse = await getWeatherDetails();
+
+      if (typeof weatherApiResponse !== "undefined") {
+        weatherAvailable = true;
+        weatherData = weatherApiResponse;
+        currentWeather = weatherData.current;
+        currentWeatherDescription = currentWeather.weather[0].main;
+        dailyWeather = weatherData.daily;
+        console.log(dailyWeather[0].weather[0].main);
+
+        const fullDateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+        const timeOptions = { hour: "numeric", minute: "numeric", second: "numeric" };
+
+        let sunsetDateObject = new Date(currentWeather.sunset * 1000);
+
+        formattedSunsetTime = sunsetDateObject.toLocaleString("en-IE", timeOptions);
+
+        for (let dailyForecast in dailyWeather) {
+          let dateObject = new Date(dailyWeather[dailyForecast].dt * 1000);
+
+          let dailyWeatherSummary = dailyWeather[dailyForecast].weather;
+          console.log(dailyWeatherSummary);
+
+          console.log(dateObject);
+
+          let formattedDate = dateObject.toLocaleString("en-IE", fullDateOptions);
+
+          let dayWeatherObject = {
+            Date: formattedDate,
+            Summary: dailyWeatherSummary[0]["main"],
+            Description: dailyWeatherSummary[0]["description"],
+          };
+
+          weatherForecastNextWeek.push(dayWeatherObject);
+        }
+
+        console.log(weatherForecastNextWeek);
+
+        currentWeatherFormattedObject = {
+          "Perceived Temperature": currentWeather["feels_like"],
+          Pressure: currentWeather["pressure"],
+          Humidity: currentWeather["humidity"],
+          "Wind Speed": currentWeather["wind_speed"],
+        };
+      } else {
         weatherAvailable = false;
         currentWeather = undefined;
         currentWeatherFormattedObject = undefined;
@@ -164,8 +156,6 @@ const Monuments = {
         formattedSunsetTime = undefined;
         currentWeatherDescription = undefined;
       }
-
-      
 
       return h.view("viewPointOfInterest", {
         title: monument.title,
@@ -176,7 +166,7 @@ const Monuments = {
         weatherForecastNextWeek: weatherForecastNextWeek,
         sunset: formattedSunsetTime,
         weatherAvailable: weatherAvailable,
-        adminUser: adminUser
+        adminUser: adminUser,
       });
     },
   },
@@ -273,8 +263,8 @@ const Monuments = {
       await newMonument.save();
 
       console.log(newMonument);
-      user.numberOfRecords = existingRecordCount + 1
-      await user.save()
+      user.numberOfRecords = existingRecordCount + 1;
+      await user.save();
       console.log("Working till after saving monument");
 
       //Adding province category
@@ -404,12 +394,11 @@ const Monuments = {
     handler: async function (request, h) {
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
-      let adminUser = false
+      let adminUser = false;
 
-      if (user.userType === 'Admin') {
-        adminUser = true
+      if (user.userType === "Admin") {
+        adminUser = true;
       }
-
 
       const monument = await Monument.findById(request.params.id).populate("categories").lean();
       let selectedCategories = monument.categories;
@@ -427,7 +416,7 @@ const Monuments = {
         monument: monument,
         categories: categories,
         selectedCategories: selectedCategoryTitles,
-        adminUser: adminUser
+        adminUser: adminUser,
       });
     },
   },
@@ -643,16 +632,15 @@ const Monuments = {
       const existingRecordCount = user.numberOfRecords;
 
       if (existingRecordCount > 0) {
-        user.numberOfRecords = existingRecordCount - 1
+        user.numberOfRecords = existingRecordCount - 1;
       }
 
-      await user.save()
+      await user.save();
 
       const recordId = request.params.id;
       await Monument.deleteOne({ _id: recordId });
       //const monumentRecord = await Monument.findById({ _id: recordId })
       await Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
-      
 
       return h.redirect("/report");
     },
