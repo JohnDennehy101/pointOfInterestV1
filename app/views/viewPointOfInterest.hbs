@@ -147,7 +147,7 @@
 
             </div>
             {{else}}
-            <div>
+            <div class="uk-margin-top">
                 <div class="uk-card uk-card-default uk-card-large uk-card-body">
                     <h3 class="uk-card-title">No Weather Data</h3>
                     <p>No weather was found for the coordinates provided. The coordinates can be edited on the edit
@@ -183,25 +183,31 @@
     let currentWeatherDescription = '{{currentWeatherDescription}}'
     let weatherDescriptionIcon = document.getElementById('weatherDescriptionIcon')
 
-    if (currentWeatherDescription == 'Drizzle' || currentWeatherDescription == 'Rain' || currentWeatherDescription == 'Mist') {
-        weatherDescriptionIcon.src = '../images/rain.png'
+    if (currentWeatherDescription !== '') {
+        if (currentWeatherDescription == 'Drizzle' || currentWeatherDescription == 'Rain' || currentWeatherDescription == 'Mist') {
+            weatherDescriptionIcon.src = '../images/rain.png'
+
+        }
+        else if (currentWeatherDescription == 'Snow') {
+            weatherDescriptionIcon.src = '../images/snowflake.png'
+        }
+        else if (currentWeatherDescription == 'Clouds' || currentWeatherDescription == 'Fog') {
+            weatherDescriptionIcon.src = '../images/cloud.png'
+
+        }
+        else if (currentWeatherDescription == 'Thunderstorm') {
+
+            weatherDescriptionIcon.src = '../images/umbrella.png'
+        }
+        else if (currentWeatherDescription == 'Clear') {
+            weatherDescriptionIcon.src = '../images/sun.png'
+        }
+        else {
+            weatherDescriptionIcon.src = '../images/sun.png'
+        }
+
 
     }
-    else if (currentWeatherDescription == 'Snow') {
-        weatherDescriptionIcon.src = '../images/snowflake.png'
-    }
-    else if (currentWeatherDescription == 'Clouds' || currentWeatherDescription == 'Fog') {
-        weatherDescriptionIcon.src = '../images/cloud.png'
 
-    }
-    else if (currentWeatherDescription == 'Thunderstorm') {
 
-        weatherDescriptionIcon.src = '../images/umbrella.png'
-    }
-    else if (currentWeatherDescription == 'Clear') {
-        weatherDescriptionIcon.src = '../images/sun.png'
-    }
-    else {
-        weatherDescriptionIcon.src = '../images/sun.png'
-    }
 </script>
