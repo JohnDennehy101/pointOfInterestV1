@@ -54,6 +54,27 @@
         UIkit.notification({ message: '<span uk-icon=\'icon: check\'></span> Successfully updated settings' })
     }
 
+    const currentUserType = '{{user.userType}}'
+    const userTypeSelectField = document.getElementById('userTypeSelectField');
+
+    function selectCurrentUserType(type) {
+
+        let userTypeOptions = userTypeSelectField.children;
+        for (userType in userTypeOptions) {
+            if (userTypeOptions[userType].textContent === currentUserType) {
+                userTypeOptions[userType].selected = true
+                break
+
+            }
+
+
+        }
+
+
+    }
+
+    selectCurrentUserType(currentUserType)
+
 
 
 

@@ -111,6 +111,7 @@ const Accounts = {
         lastName: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
+        userType: Joi.string()
       },
       failAction: function (request, h, error) {
         return h
@@ -130,6 +131,7 @@ const Accounts = {
       user.lastName = userEdit.lastName;
       user.email = userEdit.email;
       user.password = userEdit.password;
+      user.userType = userEdit.userType
       let now = new Date();
       user.lastUpdated = now.getTime();
       await user.save();
