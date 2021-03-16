@@ -147,6 +147,18 @@ const Accounts = {
       return h.redirect("/settings");
     },
   },
+  showAdminDashboard: {
+    handler: async function (request, h) {
+      const id = request.auth.credentials.id;
+      const user = await User.findById(id).lean();
+      let adminUser = false
+
+      if (user.userType === 'Admin') {
+        adminUser = true
+      }
+      return h.view("adminDashboard", {adminUser: adminUser})
+    }
+  },
   deleteAccount: {
     handler: async function (request, h) {
       let userId = request.params.id;
