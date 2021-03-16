@@ -36,14 +36,29 @@
                         </div>
                     </div>
                     <div class="uk-margin">
-                        <button class="uk-button uk-button-primary uk-button-large uk-width-1-1">Sign up</button>
+                        <div class="uk-inline uk-width-1-1">
+                            <select class="uk-select uk-form-large" name="userType">
+                                <option value="" disabled selected>Select User Type</option>
+                                <option value="User">User</option>
+                                <option value="Admin">Admin</option>
+
+                            </select>
+                        </div>
                     </div>
-                    {{accountJustDeleted}}
-                </form>
-                {{> error }}
+
+
+
+
             </div>
+            <div class="uk-margin">
+                <button class="uk-button uk-button-primary uk-button-large uk-width-1-1">Sign up</button>
+            </div>
+            {{accountJustDeleted}}
+            </form>
+            {{> error }}
         </div>
     </div>
+</div>
 </div>
 
 <script>

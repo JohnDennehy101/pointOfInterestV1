@@ -24,6 +24,7 @@ const Accounts = {
         lastName: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
+        userType: Joi.string()
       },
       failAction: function (request, h, error) {
         return h
@@ -45,11 +46,26 @@ const Accounts = {
         }
 
         const payload = request.payload;
+        const userType = payload.userType
+        console.log('User Type')
+        console.log(userType)
+        let accountType = 'User'
+
+        if (typeof userType !== "undefined") {
+
+          if (userType === 'Admin') {
+            accountType = 'Admin'
+          }
+
+        }
+
+
         const newUser = new User({
           firstName: payload.firstName,
           lastName: payload.lastName,
           email: payload.email,
           password: payload.password,
+          userType: accountType,
           lastUpdated: null,
         });
         const user = await newUser.save();
