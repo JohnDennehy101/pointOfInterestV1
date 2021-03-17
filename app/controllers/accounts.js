@@ -1,5 +1,7 @@
 "use strict";
 const User = require("../models/user");
+const Category = require("../models/categories")
+const Monument = require("../models/monuments")
 const Joi = require("@hapi/joi");
 
 const Accounts = {
@@ -148,6 +150,10 @@ const Accounts = {
   showAdminDashboard: {
     handler: async function (request, h) {
       const allUsers = await User.find().lean();
+      const allUsersCount = await User.find().count()
+      const allCategoriesCount = await Category.find().count()
+      const allMonumentsCount = await Monument.find().count()
+      
 
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
@@ -156,7 +162,12 @@ const Accounts = {
       if (user.userType === "Admin") {
         adminUser = true;
       }
-      return h.view("adminDashboard", { adminUser: adminUser, allUsers: allUsers });
+      return h.view("adminDashboard", { 
+        adminUser: adminUser, 
+        allUsers: allUsers,
+        allUsersCount: allUsersCount,
+        allCategoriesCount: allCategoriesCount,
+        allMonumentsCount: allMonumentsCount });
     },
   },
   deleteAccount: {
