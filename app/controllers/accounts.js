@@ -181,7 +181,7 @@ const Accounts = {
         return h.redirect("/accountDeleted");
       }
       else if (loggedInUser.userType === 'Admin') {
-         return h.redirect("/adminDashboard");  
+         return h.redirect("/adminDashboard", {accountJustDeleted: "true"});  
       }
       
     },

@@ -119,4 +119,10 @@
 
         }
     })
+
+    let notification = '{{accountJustDeleted}}'
+
+    if (notification === 'true') {
+        UIkit.notification({ message: '<span uk-icon=\'icon: check\'></span> Successfully deleted account.' })
+    }
 </script>
