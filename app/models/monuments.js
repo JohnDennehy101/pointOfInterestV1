@@ -20,7 +20,7 @@ const monumentSchema = new Schema({
       ref: "Category",
     },
   ],
-  image: String,
+  image: [String],
   province: String,
   county: String,
 });

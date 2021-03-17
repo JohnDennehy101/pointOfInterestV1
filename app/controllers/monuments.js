@@ -18,7 +18,7 @@ cloudinary.config({
 
 const handleFileUpload = (file) => {
   return new Promise((resolve, reject) => {
-    const filename = file.hapi.filename;
+    //const filename = file.hapi.filename;
     const data = file._data;
     resolve(data);
   });
@@ -205,10 +205,14 @@ const Monuments = {
       const data = request.payload;
       let categories = request.payload.category;
       let newCategoryObjectIds = [];
-
-      console.log(data);
-
+      let cloudinaryPromise;
+      let cloudinarySecureUrl;
+      let monumentImageUrlArray = []
       const image = await data.imageUpload;
+
+      
+
+      
 
       let streamUpload = (req) => {
         return new Promise((resolve, reject) => {
@@ -226,10 +230,29 @@ const Monuments = {
         return result;
       }
 
-      let cloudinaryPromise;
-      let cloudinarySecureUrl;
 
-      const imageBuffer = await handleFileUpload(image);
+      
+
+      console.log("image field")
+      if (image.length > 1) {
+        for (let individualImage in image) {
+          let imageBuffer = await handleFileUpload(image[individualImage]);
+          cloudinaryPromise = async_func(imageBuffer);
+          cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+          return data.secure_url;
+        });
+
+          let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+
+          monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
+
+
+
+        }
+        
+      }
+      else {
+        const imageBuffer = await handleFileUpload(image);
 
       if (data.imageUpload.hapi.filename.length !== 0) {
         cloudinaryPromise = async_func(imageBuffer);
@@ -240,11 +263,18 @@ const Monuments = {
         cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
       }
 
-      // if (!Array.isArray(categories) && categories !== "") {
-      //   categories = [categories];
-      // }
+      
 
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+      monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
+
+      }
+      console.log(monumentImageUrlArray)
+      console.log(image)
+
+      
+
+      
       const provinceCategoryRef = await Category.find({ title: request.payload.province });
       const id = request.auth.credentials.id;
       const user = await User.findById(id);
@@ -254,7 +284,7 @@ const Monuments = {
         description: request.payload.description,
         user: user._id,
         categories: [],
-        image: cloudinarySecureUrlPromiseResolved,
+        image: monumentImageUrlArray,
         province: request.payload.province,
         county: request.payload.county,
         coordinates: { latitude: request.payload.latitude, longitude: request.payload.longitude },
