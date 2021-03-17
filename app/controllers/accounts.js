@@ -173,10 +173,17 @@ const Accounts = {
   deleteAccount: {
     handler: async function (request, h) {
       let userId = request.params.id;
+      const loggedInId = request.auth.credentials.id;
+      const user = await User.findById(userId)
+      const loggedInUser = await User.findById(loggedInId)
       await User.deleteOne({ _id: userId });
-      //request.cookieAuth.clear();
-      //return h.view("signup", {accountJustDeleted: 'true'})
-      return h.redirect("/accountDeleted");
+      if (loggedInUser.userType === 'User') {
+        return h.redirect("/accountDeleted");
+      }
+      else if (loggedInUser.userType === 'Admin') {
+         return h.redirect("/adminDashboard");  
+      }
+      
     },
   },
   accountDeleted: {
