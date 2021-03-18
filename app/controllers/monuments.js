@@ -245,6 +245,8 @@ const Monuments = {
           console.log('Testing image name field')
           console.log(image[individualImage].hapi.filename)
           cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+            //Edit to include public id (for deleting from Cloudinary - NEED TO UPDATE MODEL AS WELL)
+          console.log(data)
           return data.secure_url;
         });
 
@@ -523,8 +525,11 @@ const Monuments = {
       let streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           let stream = cloudinary.uploader.upload_stream((result, error) => {
+            
             resolve(result);
           });
+
+         
 
           streamifier.createReadStream(req).pipe(stream);
         });
@@ -532,6 +537,7 @@ const Monuments = {
 
       async function async_func(req) {
         let result = await streamUpload(req);
+        
 
         return result;
       }
