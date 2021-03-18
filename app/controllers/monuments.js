@@ -3,6 +3,7 @@
 const Monument = require("../models/monuments");
 const Category = require("../models/categories");
 const User = require("../models/user");
+const Image = require("../models/image")
 const cloudinary = require("cloudinary");
 const streamifier = require("streamifier");
 const env = require("dotenv");
@@ -18,7 +19,8 @@ cloudinary.config({
 
 const handleFileUpload = (file) => {
   return new Promise((resolve, reject) => {
-    //const filename = file.hapi.filename;
+    //let filename = file.hapi.filename;
+    //console.log(filename)
     const data = file._data;
     resolve(data);
   });
@@ -49,7 +51,9 @@ const Monuments = {
       if (user.userType === "Admin") {
         adminUser = true;
       }
-      const monuments = await Monument.find().populate("user").lean();
+      
+      const monuments = await Monument.find().populate("user").populate("images").lean();
+      
       const provinceCategories = await Category.find({ title: { $in: ["Munster", "Leinster", "Connacht", "Ulster"] } })
         .populate("monuments")
         .lean();
@@ -238,13 +242,25 @@ const Monuments = {
         for (let individualImage in image) {
           let imageBuffer = await handleFileUpload(image[individualImage]);
           cloudinaryPromise = async_func(imageBuffer);
+          console.log('Testing image name field')
+          console.log(image[individualImage].hapi.filename)
           cloudinarySecureUrl = cloudinaryPromise.then((data) => {
           return data.secure_url;
         });
 
           let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
-          monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
+          let newImage = new Image(
+            {
+              title: image[individualImage].hapi.filename,
+              imageUrl: cloudinarySecureUrlPromiseResolved
+            }
+          )
+
+          await newImage.save()
+
+
+          monumentImageUrlArray.push(newImage._id)
 
 
 
@@ -253,20 +269,35 @@ const Monuments = {
       }
       else {
         const imageBuffer = await handleFileUpload(image);
+        let imageFileName = ''
 
       if (data.imageUpload.hapi.filename.length !== 0) {
         cloudinaryPromise = async_func(imageBuffer);
+        imageFileName = image.hapi.filename
         cloudinarySecureUrl = cloudinaryPromise.then((data) => {
           return data.secure_url;
         });
       } else {
+        imageFileName = 'pointOfInterestDefaultImage.png'
         cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
       }
 
       
 
       let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
-      monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
+
+      let newImage = new Image(
+            {
+              title: imageFileName,
+              imageUrl: cloudinarySecureUrlPromiseResolved
+            }
+          )
+
+          await newImage.save()
+
+
+      monumentImageUrlArray.push(newImage._id)
+      //monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
 
       }
       console.log(monumentImageUrlArray)
@@ -284,7 +315,7 @@ const Monuments = {
         description: request.payload.description,
         user: user._id,
         categories: [],
-        image: monumentImageUrlArray,
+        images: monumentImageUrlArray,
         province: request.payload.province,
         county: request.payload.county,
         coordinates: { latitude: request.payload.latitude, longitude: request.payload.longitude },
