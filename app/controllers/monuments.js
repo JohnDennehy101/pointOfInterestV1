@@ -80,7 +80,7 @@ const Monuments = {
         adminUser = true;
       }
 
-      const monument = await Monument.findById(request.params.id).populate("categories").lean();
+      const monument = await Monument.findById(request.params.id).populate("categories").populate("images").lean();
       let weatherData,
         currentWeather,
         dailyWeather,
@@ -461,7 +461,7 @@ const Monuments = {
         adminUser = true;
       }
 
-      const monument = await Monument.findById(request.params.id).populate("categories").lean();
+      const monument = await Monument.findById(request.params.id).populate("categories").populate("images").lean();
       let selectedCategories = monument.categories;
       let selectedCategoryTitles = [];
 
