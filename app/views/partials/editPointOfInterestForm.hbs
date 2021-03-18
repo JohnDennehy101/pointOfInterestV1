@@ -89,12 +89,17 @@
         <div class="uk-margin">
             <div class="uk-form-label">Image</div>
             <div uk-form-custom>
-                <input type="file" multiple accept="image/x-png,image/gif,image/jpeg" name="imageUpload" id="imageInput"
-                    onchange="readFile(this)">
+                <input type="file" accept="image/x-png,image/gif,image/jpeg" name="imageUpload" id="imageInput"
+                    onchange="readFile(this)" multiple>
                 <button class="uk-button uk-button-secondary" type="button" tabindex="-1" name='test'>Add Monument
                     Image</button>
             </div>
+            {{> error}}
         </div>
+
+        <ul id="preview"
+            class="uk-list uk-grid-match uk-child-width-1-2 uk-child-width-1-4@l uk-child-width-1-5@xl uk-text-center"
+            uk-grid uk-scrollspy="cls: uk-animation-scale-up; target: .list-item; delay: 80"></ul>
 
 
 

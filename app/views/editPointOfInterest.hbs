@@ -40,6 +40,8 @@
     let newCategoryInputField = document.getElementById('newCategoryInputField');
     let addNewCategoryButton = document.getElementById('addNewCategoryButton');
     let categoryDivContainer = document.getElementById('categoryDivContainer')
+    let imagesList = document.getElementById('imagesList')
+    console.log(imagesList)
 
     addNewCategoryButton.addEventListener('click', () => {
 
@@ -207,63 +209,131 @@
 
     let imageInput = document.getElementById('imageInput');
 
-    const preview = document.getElementById('preview');
-    function imgPreviewLi(readerResult, filename) {
+    imageInput.addEventListener('change', () => {
+        console.log(imagesList.children)
+        while (imagesList.children.length > 0) {
+            let individualImage = imagesList.children[0];
+            individualImage.parentNode.removeChild(individualImage);
+        }
 
-        const img = document.getElementById('imageEditScreen')
+        let test = new FileReader();
+
+
+    })
+
+    const preview = document.getElementById('preview');
+
+    function imgPreviewLi(readerResult, filename) {
+        const li = document.createElement("li");
+        const div = document.createElement("div");
+        const img = document.createElement("img");
         const span = document.createElement("span");
 
+        li.className = "list-item uk-margin-medium-top";
+        div.className = "uk-cover-container";
         img.className = "delete-img-preview";
+        img.setAttribute("id", "img-preview-responsive");
         img.setAttribute("src", readerResult);
         img.setAttribute("name", "image")
-        img.style.width = '450px'
         img.setAttribute("data-name", filename);
         img.setAttribute("alt", "file-image-preview");
         span.className = "uk-text-meta uk-text-break file-upload-name";
         span.textContent = filename;
-        return img
+
+        div.append(img);
+        li.append(div, span);
+        return li;
     }
 
 
-    let imageInputTest = document.getElementById('imageInput');
-
-    function readFile(input) {
-
-        let file = input.files[0];
 
 
-        let fileName = input.files[0].name;
 
-        let reader = new FileReader();
+    async function readFile(input) {
 
-        if (preview.childNodes.length < 1) {
-            reader.onload = function () {
-                let imageResult = imgPreviewLi(reader.result, fileName)
-                preview.append(imageResult)
-            };
-            reader.readAsDataURL(file);
+        console.log(input.files)
 
-            reader.onerror = function () {
-                console.log(reader.error);
-            };
+        let allFiles = input.files
+
+        if (allFiles.length < 2) {
+            let file = input.files[0];
+
+
+            let fileName = input.files[0].name;
+
+            let reader = new FileReader();
+
+            //reader.readAsDataURL(file)
+
+            if (preview.childNodes.length < 1) {
+                reader.onload = function () {
+                    let imageResult = imgPreviewLi(reader.result, fileName)
+                    preview.append(imageResult)
+                };
+                reader.readAsDataURL(file);
+
+                reader.onerror = function () {
+                    console.log(reader.error);
+                };
+
+
+            }
 
 
         }
-        else {
-            reader.onload = function () {
-                let imageResult = imgPreviewLi(reader.result, fileName)
-                preview.append(imageResult)
-            };
-            reader.readAsDataURL(file);
+        else if (allFiles.length >= 2) {
+            let file = ''
+            console.log(allFiles)
+            console.log(allFiles[0])
+            console.log(file)
+            for (let i = 0; i < allFiles.length; i++) {
 
-            reader.onerror = function () {
-                console.log(reader.error);
-            };
+                let file = await allFiles[i];
+                let fileName = allFiles[i].name;
+                let reader = new FileReader();
+
+                reader.onload = function () {
+                    let imageResult = imgPreviewLi(reader.result, fileName)
+                    preview.append(imageResult)
+                };
+                reader.readAsDataURL(file);
+
+                reader.onerror = function () {
+                    console.log(reader.error);
+                };
+
+            }
 
         }
+
+        //let file = input.files[0];
+
+
+        //let fileName = input.files[0].name;
+
+        //let reader = new FileReader();
+
+        //reader.readAsDataURL(file)
+
+        //if (preview.childNodes.length < 1) {
+        //reader.onload = function () {
+        //let imageResult = imgPreviewLi(reader.result, fileName)
+        //preview.append(imageResult)
+        //};
+        // reader.readAsDataURL(file);
+
+
+
+        // }
+
+
+        //console.log(reader)
+        //console.log(file)
+        //reader.readAsDataURL(file);
 
 
 
     }
+
 
 </script>
