@@ -513,10 +513,14 @@ const Monuments = {
       },
     },
     handler: async function (request, h) {
+      const data = request.payload;
       const monumentEdit = request.payload;
       let categories = request.payload.category;
       console.log("start of edit flow");
       let newCategoryObjectIds = [];
+      let monumentImageUrlArray = []
+       let cloudinaryPromise;
+      let cloudinarySecureUrl;
 
       const image = await monumentEdit.imageUpload;
 
@@ -541,10 +545,94 @@ const Monuments = {
 
         return result;
       }
-      let cloudinaryPromise;
-      let cloudinarySecureUrl;
 
-      const imageBuffer = await handleFileUpload(image);
+
+
+
+
+      console.log("image field")
+      if (image.length > 1) {
+        for (let individualImage in image) {
+          let imageBuffer = await handleFileUpload(image[individualImage]);
+          cloudinaryPromise = async_func(imageBuffer);
+          console.log('Testing image name field')
+          console.log(image[individualImage].hapi.filename)
+          cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+            //Edit to include public id (for deleting from Cloudinary - NEED TO UPDATE MODEL AS WELL)
+          console.log(data)
+          return data.secure_url;
+        });
+
+          let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+
+          let newImage = new Image(
+            {
+              title: image[individualImage].hapi.filename,
+              imageUrl: cloudinarySecureUrlPromiseResolved
+            }
+          )
+
+          await newImage.save()
+
+
+          monumentImageUrlArray.push(newImage._id)
+
+
+
+        }
+        
+      }
+      else {
+        const imageBuffer = await handleFileUpload(image);
+        let imageFileName = ''
+
+      if (data.imageUpload.hapi.filename.length !== 0) {
+        cloudinaryPromise = async_func(imageBuffer);
+        imageFileName = image.hapi.filename
+        cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+          return data.secure_url;
+        });
+      } else {
+        imageFileName = 'pointOfInterestDefaultImage.png'
+        cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
+      }
+
+
+      let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+
+      let newImage = new Image(
+            {
+              title: imageFileName,
+              imageUrl: cloudinarySecureUrlPromiseResolved
+            }
+          )
+
+          await newImage.save()
+
+
+      monumentImageUrlArray.push(newImage._id)
+      //monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+
+      //const imageBuffer = await handleFileUpload(image);
 
       const monument = await Monument.findById(request.params.id);
       let monumentId = monument._id;
@@ -653,23 +741,23 @@ const Monuments = {
         }
       }
 
-      if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
-        cloudinaryPromise = async_func(imageBuffer);
-        cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-          return data.secure_url;
-        });
-      } else {
-        cloudinarySecureUrl = monument.image;
-      }
+      // if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
+      //   cloudinaryPromise = async_func(imageBuffer);
+      //   cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+      //     return data.secure_url;
+      //   });
+      // } else {
+      //   cloudinarySecureUrl = monument.image;
+      // }
 
-      let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+      //let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
       console.log("monument category ids");
       console.log(newCategoryObjectIds);
       monument.title = monumentEdit.title;
       monument.description = monumentEdit.description;
       monument.user = monumentEdit._id;
-      monument.image = cloudinarySecureUrlPromiseResolved;
+      monument.images = monumentImageUrlArray;
       monument.categories = [monument.categories[0]];
       (monument.latitude = monumentEdit.latitude), (monument.longitude = monumentEdit.longitude);
 
