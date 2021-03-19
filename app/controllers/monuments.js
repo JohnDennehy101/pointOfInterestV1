@@ -212,6 +212,7 @@ const Monuments = {
       let cloudinaryPromise;
       let cloudinarySecureUrl;
       let monumentImageUrlArray = []
+      let monumentImageTitleArray = []
       const image = await data.imageUpload;
 
       
@@ -263,6 +264,7 @@ const Monuments = {
 
 
           monumentImageUrlArray.push(newImage._id)
+          monumentImageTitleArray.push(newImage.title)
 
 
 
@@ -299,6 +301,7 @@ const Monuments = {
 
 
       monumentImageUrlArray.push(newImage._id)
+       monumentImageTitleArray.push(newImage.title)
       //monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
 
       }
@@ -449,6 +452,11 @@ const Monuments = {
         await newMonument.save();
       }
 
+      
+      
+      await Image.updateMany({title: { $in: monumentImageTitleArray}}, {$set: {"monument": newMonument._id}})
+      
+
       return h.redirect("/report");
     },
   },
@@ -519,6 +527,7 @@ const Monuments = {
       console.log("start of edit flow");
       let newCategoryObjectIds = [];
       let monumentImageUrlArray = []
+      let monumentImageTitleArray = []
        let cloudinaryPromise;
       let cloudinarySecureUrl;
 
@@ -577,6 +586,7 @@ const Monuments = {
 
 
           monumentImageUrlArray.push(newImage._id)
+          //monumentImageTitleArray.push(newImage.title)
 
 
 
@@ -610,57 +620,7 @@ const Monuments = {
 
       }
       
-    //   else {
-    //     const imageBuffer = await handleFileUpload(image);
-    //     let imageFileName = ''
-
-    //   if (data.imageUpload.hapi.filename.length !== 0) {
-    //     cloudinaryPromise = async_func(imageBuffer);
-    //     imageFileName = image.hapi.filename
-    //     cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-    //       return data.secure_url;
-    //     });
-    //   } else {
-    //     imageFileName = 'pointOfInterestDefaultImage.png'
-    //     cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
-    //   }
-
-
-    //   let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
-
-    //   let newImage = new Image(
-    //         {
-    //           title: imageFileName,
-    //           imageUrl: cloudinarySecureUrlPromiseResolved
-    //         }
-    //       )
-
-    //       await newImage.save()
-
-
-    //   monumentImageUrlArray.push(newImage._id)
-    //   //monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
-
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
-
-      //const imageBuffer = await handleFileUpload(image);
+  
 
       const monument = await Monument.findById(request.params.id);
       let monumentId = monument._id;
@@ -769,16 +729,7 @@ const Monuments = {
         }
       }
 
-      // if (monumentEdit.imageUpload.hapi.filename.length !== 0) {
-      //   cloudinaryPromise = async_func(imageBuffer);
-      //   cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-      //     return data.secure_url;
-      //   });
-      // } else {
-      //   cloudinarySecureUrl = monument.image;
-      // }
-
-      //let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+     
 
       console.log("monument category ids");
       console.log(newCategoryObjectIds);
@@ -806,6 +757,7 @@ const Monuments = {
       }
 
       await monument.save();
+      await Image.updateMany({_id: { $in: monumentImageUrlArray}}, {$set: {"monument": monument._id}})
       console.log(monument);
 
       return h.redirect("/report");
@@ -814,19 +766,29 @@ const Monuments = {
   deleteMonument: {
     handler: async function (request, h) {
       const id = request.auth.credentials.id;
-      const user = await User.findById(id);
-      const existingRecordCount = user.numberOfRecords;
+     
+     
+       const recordId = request.params.id;
+       let test = await Monument.deleteOne({ _id: recordId });
+       console.log(test)
+      await Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
+      await Image.deleteMany({monument: recordId})
 
+
+
+
+
+
+        const user = await User.findById(id);
+         let existingRecordCount = user.numberOfRecords;
       if (existingRecordCount > 0) {
         user.numberOfRecords = existingRecordCount - 1;
       }
 
       await user.save();
+    
 
-      const recordId = request.params.id;
-      await Monument.deleteOne({ _id: recordId });
-      //const monumentRecord = await Monument.findById({ _id: recordId })
-      await Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
+      
 
       return h.redirect("/report");
     },
