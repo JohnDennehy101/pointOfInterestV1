@@ -208,15 +208,30 @@
 
 
     let imageInput = document.getElementById('imageInput');
+    console.log(imageInput)
+
+    imageInput.addEventListener('click', (e) => {
+        console.log(e)
+        let imgPreviewElems = preview.children
+
+
+        Array.from(imgPreviewElems).forEach(function (element) {
+            preview.removeChild(element)
+        });
+    })
 
     imageInput.addEventListener('change', () => {
-        console.log(imagesList.children)
+        console.log('working to here')
+
+
+
         while (imagesList.children.length > 0) {
             let individualImage = imagesList.children[0];
             individualImage.parentNode.removeChild(individualImage);
         }
 
-        let test = new FileReader();
+
+
 
 
     })
@@ -246,6 +261,25 @@
     }
 
 
+    function imgDisplayLi(readerResult) {
+        const li = document.createElement("li")
+        const canvas = document.createElement("canvas")
+        canvas.setAttribute("width", "600")
+        canvas.setAttribute("height", "900")
+
+
+        const img = document.createElement("img");
+        img.setAttribute("src", readerResult);
+        img.setAttribute("uk-img", "target: !.uk - slideshow - items")
+
+        li.appendChild(img)
+        li.appendChild(canvas)
+        imagesList.appendChild(li)
+
+
+    }
+
+
 
 
 
@@ -268,6 +302,8 @@
             if (preview.childNodes.length < 1) {
                 reader.onload = function () {
                     let imageResult = imgPreviewLi(reader.result, fileName)
+
+                    imgDisplayLi(reader.result)
                     preview.append(imageResult)
                 };
                 reader.readAsDataURL(file);
@@ -294,6 +330,7 @@
 
                 reader.onload = function () {
                     let imageResult = imgPreviewLi(reader.result, fileName)
+                    imgDisplayLi(reader.result)
                     preview.append(imageResult)
                 };
                 reader.readAsDataURL(file);
