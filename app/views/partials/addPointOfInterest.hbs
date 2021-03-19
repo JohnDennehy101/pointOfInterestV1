@@ -123,7 +123,8 @@
         <script>
             let newCategoryInputField = document.getElementById('newCategoryInputField');
             let addNewCategoryButton = document.getElementById('addNewCategoryButton');
-            let categoryDivContainer = document.getElementById('categoryDivContainer')
+            let categoryDivContainer = document.getElementById('categoryDivContainer');
+            let imageInput = document.getElementById('imageInput')
 
             addNewCategoryButton.addEventListener('click', () => {
 
@@ -228,8 +229,15 @@
             }
 
 
-            let imageInputTest = document.getElementById('imageInput');
-            console.log(imageInputTest)
+            imageInput.addEventListener('click', (e) => {
+                console.log(e)
+                let imgPreviewElems = preview.children
+
+
+                Array.from(imgPreviewElems).forEach(function (element) {
+                    preview.removeChild(element)
+                });
+            })
 
             async function readFile(input) {
 
