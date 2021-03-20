@@ -8,9 +8,8 @@ const Joi = require("@hapi/joi");
 //const axios = require("axios");
 const ImageFunctionality = require("../utils/imageFunctionality");
 const WeatherFunctionality = require("../utils/weatherFunctionality");
+const CategoryFunctionality = require("../utils/categoryFunctionality");
 env.config();
-
-
 
 const Monuments = {
   home: {
@@ -39,13 +38,8 @@ const Monuments = {
       }
 
       const monuments = await Monument.find().populate("user").populate("images").lean();
-
-      const provinceCategories = await Category.find({ title: { $in: ["Munster", "Leinster", "Connacht", "Ulster"] } })
-        .populate("monuments")
-        .lean();
-      const otherCategories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } })
-        .populate("monuments")
-        .lean();
+      const provinceCategories = await CategoryFunctionality.findProvinceCategories();
+      const otherCategories = await CategoryFunctionality.findAllOtherCategories();
 
       return h.view("report", {
         title: "Monuments added to Date",
@@ -67,11 +61,10 @@ const Monuments = {
       }
 
       const monument = await Monument.findById(request.params.id).populate("categories").populate("images").lean();
-    
-      let weatherApiResponse = await WeatherFunctionality.getWeatherDetails(monument);
-      let weatherDataObject = await WeatherFunctionality.manipulateApiResponse(weatherApiResponse)
 
-      
+      let weatherApiResponse = await WeatherFunctionality.getWeatherDetails(monument);
+      let weatherDataObject = await WeatherFunctionality.manipulateApiResponse(weatherApiResponse);
+
       return h.view("viewPointOfInterest", {
         title: monument.title,
         monument: monument,
@@ -119,14 +112,14 @@ const Monuments = {
     handler: async function (request, h) {
       const data = request.payload;
       let categories = request.payload.category;
-      let newCategoryObjectIds = [];
-      let monumentImageTitleArray = [];
+
       const image = await data.imageUpload;
 
       const id = request.auth.credentials.id;
       const user = await User.findById(id);
       const existingRecordCount = user.numberOfRecords;
       let imageResult = await ImageFunctionality.addMonumentImages(image, data);
+
       const newMonument = new Monument({
         title: request.payload.title,
         description: request.payload.description,
@@ -137,122 +130,31 @@ const Monuments = {
         county: request.payload.county,
         coordinates: { latitude: request.payload.latitude, longitude: request.payload.longitude },
       });
+
       await newMonument.save();
 
-      console.log(newMonument);
       user.numberOfRecords = existingRecordCount + 1;
       await user.save();
-      console.log("Working till after saving monument");
 
       //Adding province category
-      let category = await Category.find({ title: request.payload.province });
-      console.log(category);
-      console.log(category.length);
+      let provinceCategoryId = await CategoryFunctionality.handleMonumentProvinceCategory(
+        request.payload.province,
+        newMonument
+      );
 
-      if (category.length === 0) {
-        category = new Category({
-          title: request.payload.province,
-          monuments: newMonument._id,
-        });
+      newMonument.categories.push(provinceCategoryId);
 
-        await category.save();
-        newMonument.categories.push(category._id);
-        console.log("Working till after saving province category");
-      } else {
-        console.log(category);
-        category[0].monuments.push(newMonument._id);
-        await category[0].save();
-        newMonument.categories.push(category[0]._id);
-      }
-
-      //newMonument.categories.push(category._id);
       let monumentId = newMonument._id;
       await newMonument.save();
 
       //Other Categories code
 
-      if (!Array.isArray(categories) && typeof categories != "undefined") {
-        console.log("NOT ARRAY");
-        let categoryQuery = await Category.find({
-          $and: [{ title: categories }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
-        });
-        console.log(categoryQuery);
-        if (categoryQuery.length === 0) {
-          let singleNewCategory = new Category({
-            title: categories,
-            monuments: [monumentId],
-          });
+      let otherCategoryIds = await CategoryFunctionality.handleMonumentAdditionalCategories(categories, monumentId);
 
-          await singleNewCategory.save();
-          newCategoryObjectIds.push(singleNewCategory._id);
-          console.log(singleNewCategory);
-        } else {
-          console.log("Trying to add value to existing category");
-          console.log(categoryQuery[0]);
-          console.log(categoryQuery[0].monuments);
-          //newCategoryObjectIds.push(singleNewCategory._id)
-          newCategoryObjectIds.push(categoryQuery[0]._id);
-          categoryQuery[0].monuments.push(monumentId);
-          await categoryQuery[0].save();
-        }
-        console.log("WTF");
-        console.log(categories);
-        console.log(typeof categories);
-        //console.log(categories.length)
-      } else if (Array.isArray(categories)) {
-        console.log("COMPUTED AS ARRAY");
-        let categoryQuery = await Category.find({
-          $and: [{ title: { $in: categories } }, { title: { $nin: ["Munster", "Ulster", "Connacht", "Leinster"] } }],
-        });
-
-        console.log("Category Query length" + categoryQuery);
-        if (categoryQuery.length === categories.length) {
-          console.log("Lenght of result is same as category");
-          for (let individualCategory in categoryQuery) {
-            console.log("Looping through results, trying to append objectIds to exsiting categories");
-            categoryQuery[individualCategory].monuments.push(monumentId);
-            newCategoryObjectIds.push(categoryQuery[individualCategory]._id);
-            categoryQuery[individualCategory].save();
-          }
-        } else if (categoryQuery.length !== categories.length) {
-          console.log("Length of result is not same as category");
-          for (let individualCategory in categories) {
-            console.log("Checking each individual category");
-            let existingCategoryCheck = await Category.find({ title: categories[individualCategory] });
-
-            console.log(existingCategoryCheck);
-
-            console.log("Lenght of result" + existingCategoryCheck.length);
-            console.log(existingCategoryCheck[0]);
-            console.log(existingCategoryCheck.length);
-
-            if (existingCategoryCheck.length === 1) {
-              existingCategoryCheck[0].monuments.push(monumentId);
-              newCategoryObjectIds.push(existingCategoryCheck[0]._id);
-              console.log("pushing to existing category");
-              await existingCategoryCheck[0].save();
-            } else {
-              let singleNewCategory = new Category({
-                title: categories[individualCategory],
-                monuments: [monumentId],
-              });
-
-              await singleNewCategory.save();
-              newCategoryObjectIds.push(singleNewCategory._id);
-              console.log("pushing to new category");
-              console.log("Just added new category");
-              console.log(singleNewCategory);
-            }
-          }
-        }
-      }
-
-      console.log(newCategoryObjectIds);
-
-      if (newCategoryObjectIds.length > 0) {
-        for (let id in newCategoryObjectIds) {
-          console.log(newCategoryObjectIds[id]);
-          newMonument.categories.push(newCategoryObjectIds[id]);
+      if (otherCategoryIds.length > 0) {
+        for (let id in otherCategoryIds) {
+          console.log(otherCategoryIds[id]);
+          newMonument.categories.push(otherCategoryIds[id]);
         }
 
         await newMonument.save();
@@ -325,10 +227,9 @@ const Monuments = {
     },
     handler: async function (request, h) {
       const monumentEdit = request.payload;
-      
+
       let categories = request.payload.category;
       let newCategoryObjectIds = [];
-     
 
       const image = await monumentEdit.imageUpload;
 
@@ -452,7 +353,7 @@ const Monuments = {
       }
 
       monument.categories = [monument.categories[0]];
-      monument.coordinates.latitude = monumentEdit.latitude
+      monument.coordinates.latitude = monumentEdit.latitude;
       monument.coordinates.longitude = monumentEdit.longitude;
 
       await monument.save();
