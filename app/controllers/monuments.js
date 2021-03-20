@@ -3,28 +3,14 @@
 const Monument = require("../models/monuments");
 const Category = require("../models/categories");
 const User = require("../models/user");
-const Image = require("../models/image");
-const cloudinary = require("cloudinary");
-const streamifier = require("streamifier");
 const env = require("dotenv");
 const Joi = require("@hapi/joi");
-const axios = require("axios");
+//const axios = require("axios");
 const ImageFunctionality = require("../utils/imageFunctionality");
+const WeatherFunctionality = require("../utils/weatherFunctionality");
 env.config();
 
-// cloudinary.config({
-//   cloud_name: "monuments",
-//   api_key: process.env.cloudinary_api_key,
-//   api_secret: process.env.cloudinary_api_secret,
-// });
 
-// const handleFileUpload = (file) => {
-//   return new Promise((resolve, reject) => {
-
-//     const data = file._data;
-//     resolve(data);
-//   });
-// };
 
 const Monuments = {
   home: {
@@ -81,95 +67,20 @@ const Monuments = {
       }
 
       const monument = await Monument.findById(request.params.id).populate("categories").populate("images").lean();
-      let weatherData,
-        currentWeather,
-        dailyWeather,
-        formattedSunsetTime,
-        currentWeatherFormattedObject,
-        currentWeatherDescription,
-        weatherAvailable;
-      let weatherForecastNextWeek = [];
+    
+      let weatherApiResponse = await WeatherFunctionality.getWeatherDetails(monument);
+      let weatherDataObject = await WeatherFunctionality.manipulateApiResponse(weatherApiResponse)
 
-      async function getWeatherDetails() {
-        try {
-          const apiWeatherRequest = await axios.get(
-            `https://api.openweathermap.org/data/2.5/onecall?lat=${monument.coordinates.latitude}&lon=${monument.coordinates.longitude}&units=metric&exclude=minutely,alerts&appid=${process.env.openweather_api_key}`
-          );
-
-          if (apiWeatherRequest.status == 200) {
-            return apiWeatherRequest.data;
-          } else {
-            return undefined;
-          }
-        } catch (err) {
-          console.log("hitting error block");
-          //console.log(err)
-          return undefined;
-        }
-      }
-
-      let weatherApiResponse = await getWeatherDetails();
-
-      if (typeof weatherApiResponse !== "undefined") {
-        weatherAvailable = true;
-        weatherData = weatherApiResponse;
-        currentWeather = weatherData.current;
-        currentWeatherDescription = currentWeather.weather[0].main;
-        dailyWeather = weatherData.daily;
-        console.log(dailyWeather[0].weather[0].main);
-
-        const fullDateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-        const timeOptions = { hour: "numeric", minute: "numeric", second: "numeric" };
-
-        let sunsetDateObject = new Date(currentWeather.sunset * 1000);
-
-        formattedSunsetTime = sunsetDateObject.toLocaleString("en-IE", timeOptions);
-
-        for (let dailyForecast in dailyWeather) {
-          let dateObject = new Date(dailyWeather[dailyForecast].dt * 1000);
-
-          let dailyWeatherSummary = dailyWeather[dailyForecast].weather;
-          console.log(dailyWeatherSummary);
-
-          console.log(dateObject);
-
-          let formattedDate = dateObject.toLocaleString("en-IE", fullDateOptions);
-
-          let dayWeatherObject = {
-            Date: formattedDate,
-            Summary: dailyWeatherSummary[0]["main"],
-            Description: dailyWeatherSummary[0]["description"],
-          };
-
-          weatherForecastNextWeek.push(dayWeatherObject);
-        }
-
-        console.log(weatherForecastNextWeek);
-
-        currentWeatherFormattedObject = {
-          "Perceived Temperature": currentWeather["feels_like"],
-          Pressure: currentWeather["pressure"],
-          Humidity: currentWeather["humidity"],
-          "Wind Speed": currentWeather["wind_speed"],
-        };
-      } else {
-        weatherAvailable = false;
-        currentWeather = undefined;
-        currentWeatherFormattedObject = undefined;
-        weatherForecastNextWeek = undefined;
-        formattedSunsetTime = undefined;
-        currentWeatherDescription = undefined;
-      }
-
+      
       return h.view("viewPointOfInterest", {
         title: monument.title,
         monument: monument,
-        currentWeather: currentWeather,
-        currentWeatherFormattedObject: currentWeatherFormattedObject,
-        currentWeatherDescription: currentWeatherDescription,
-        weatherForecastNextWeek: weatherForecastNextWeek,
-        sunset: formattedSunsetTime,
-        weatherAvailable: weatherAvailable,
+        currentWeather: weatherDataObject.currentWeather,
+        currentWeatherFormattedObject: weatherDataObject.currentWeatherFormattedObject,
+        currentWeatherDescription: weatherDataObject.currentWeatherDescription,
+        weatherForecastNextWeek: weatherDataObject.weatherForecastNextWeek,
+        sunset: weatherDataObject.formattedSunsetTime,
+        weatherAvailable: weatherDataObject.weatherAvailable,
         adminUser: adminUser,
       });
     },
@@ -259,7 +170,6 @@ const Monuments = {
       await newMonument.save();
 
       //Other Categories code
-      
 
       if (!Array.isArray(categories) && typeof categories != "undefined") {
         console.log("NOT ARRAY");
@@ -348,9 +258,7 @@ const Monuments = {
         await newMonument.save();
       }
 
-      await ImageFunctionality.addMonumentIdToImageRecords(imageResult.imageTitles, newMonument._id)
-
-      
+      await ImageFunctionality.addMonumentIdToImageRecords(imageResult.imageTitles, newMonument._id);
 
       return h.redirect("/report");
     },
@@ -417,20 +325,14 @@ const Monuments = {
     },
     handler: async function (request, h) {
       const monumentEdit = request.payload;
+      
       let categories = request.payload.category;
       let newCategoryObjectIds = [];
-      let monumentImageUrlArray = [];
-      
+     
 
       const image = await monumentEdit.imageUpload;
 
-     
-
-
       let imageResult = await ImageFunctionality.editMonumentImages(image);
-
-      
-
 
       const monument = await Monument.findById(request.params.id);
       let monumentId = monument._id;
@@ -544,13 +446,14 @@ const Monuments = {
       monument.title = monumentEdit.title;
       monument.description = monumentEdit.description;
       monument.user = monumentEdit._id;
-      
+
       if (imageResult.imageIds.length > 0) {
         monument.images = imageResult.imageIds;
       }
 
       monument.categories = [monument.categories[0]];
-      (monument.latitude = monumentEdit.latitude), (monument.longitude = monumentEdit.longitude);
+      monument.coordinates.latitude = monumentEdit.latitude
+      monument.coordinates.longitude = monumentEdit.longitude;
 
       await monument.save();
       console.log(monument);
@@ -566,9 +469,8 @@ const Monuments = {
       }
 
       await monument.save();
-     
 
-      await ImageFunctionality.addMonumentIdToImageRecords(imageResult.imageTitles, monument._id)
+      await ImageFunctionality.addMonumentIdToImageRecords(imageResult.imageTitles, monument._id);
 
       return h.redirect("/report");
     },
@@ -582,8 +484,7 @@ const Monuments = {
       console.log(test);
       await Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
 
-
-      await ImageFunctionality.deleteImageRecords(recordId)
+      await ImageFunctionality.deleteImageRecords(recordId);
 
       const user = await User.findById(id);
       let existingRecordCount = user.numberOfRecords;
