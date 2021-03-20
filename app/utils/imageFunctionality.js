@@ -72,7 +72,9 @@ const ImageFunctionality = {
           return data.secure_url;
         });
       } else {
-        imageFileName = "pointOfInterestDefaultImage.png";
+        let dateObject = new Date();
+        let dateString = dateObject.toString();
+        imageFileName = "pointOfInterestDefaultImage " + dateString;
         cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
       }
 

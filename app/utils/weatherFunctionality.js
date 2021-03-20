@@ -14,8 +14,6 @@ const WeatherFunctionality = {
         return undefined;
       }
     } catch (err) {
-      console.log("hitting error block");
-      //console.log(err)
       return undefined;
     }
   },
@@ -35,7 +33,6 @@ const WeatherFunctionality = {
       currentWeather = weatherData.current;
       currentWeatherDescription = currentWeather.weather[0].main;
       dailyWeather = weatherData.daily;
-      console.log(dailyWeather[0].weather[0].main);
 
       const fullDateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
       const timeOptions = { hour: "numeric", minute: "numeric", second: "numeric" };
@@ -48,9 +45,6 @@ const WeatherFunctionality = {
         let dateObject = new Date(dailyWeather[dailyForecast].dt * 1000);
 
         let dailyWeatherSummary = dailyWeather[dailyForecast].weather;
-        console.log(dailyWeatherSummary);
-
-        console.log(dateObject);
 
         let formattedDate = dateObject.toLocaleString("en-IE", fullDateOptions);
 
@@ -62,8 +56,6 @@ const WeatherFunctionality = {
 
         weatherForecastNextWeek.push(dayWeatherObject);
       }
-
-      console.log(weatherForecastNextWeek);
 
       currentWeatherFormattedObject = {
         "Perceived Temperature": currentWeather["feels_like"],
