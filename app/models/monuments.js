@@ -21,7 +21,7 @@ const monumentSchema = new Schema({
     },
   ],
   images: [
-     {
+    {
       type: Schema.Types.ObjectId,
       ref: "Image",
     },

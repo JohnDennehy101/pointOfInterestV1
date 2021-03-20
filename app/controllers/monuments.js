@@ -3,7 +3,7 @@
 const Monument = require("../models/monuments");
 const Category = require("../models/categories");
 const User = require("../models/user");
-const Image = require("../models/image")
+const Image = require("../models/image");
 const cloudinary = require("cloudinary");
 const streamifier = require("streamifier");
 const env = require("dotenv");
@@ -51,9 +51,9 @@ const Monuments = {
       if (user.userType === "Admin") {
         adminUser = true;
       }
-      
+
       const monuments = await Monument.find().populate("user").populate("images").lean();
-      
+
       const provinceCategories = await Category.find({ title: { $in: ["Munster", "Leinster", "Connacht", "Ulster"] } })
         .populate("monuments")
         .lean();
@@ -211,13 +211,9 @@ const Monuments = {
       let newCategoryObjectIds = [];
       let cloudinaryPromise;
       let cloudinarySecureUrl;
-      let monumentImageUrlArray = []
-      let monumentImageTitleArray = []
+      let monumentImageUrlArray = [];
+      let monumentImageTitleArray = [];
       const image = await data.imageUpload;
-
-      
-
-      
 
       let streamUpload = (req) => {
         return new Promise((resolve, reject) => {
@@ -235,82 +231,62 @@ const Monuments = {
         return result;
       }
 
-
-      
-
-      console.log("image field")
+      console.log("image field");
       if (image.length > 1) {
         for (let individualImage in image) {
           let imageBuffer = await handleFileUpload(image[individualImage]);
           cloudinaryPromise = async_func(imageBuffer);
-          console.log('Testing image name field')
-          console.log(image[individualImage].hapi.filename)
+          console.log("Testing image name field");
+          console.log(image[individualImage].hapi.filename);
           cloudinarySecureUrl = cloudinaryPromise.then((data) => {
             //Edit to include public id (for deleting from Cloudinary - NEED TO UPDATE MODEL AS WELL)
-          console.log(data)
-          return data.secure_url;
-        });
+            console.log(data);
+            return data.secure_url;
+          });
 
           let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
-          let newImage = new Image(
-            {
-              title: image[individualImage].hapi.filename,
-              imageUrl: cloudinarySecureUrlPromiseResolved
-            }
-          )
+          let newImage = new Image({
+            title: image[individualImage].hapi.filename,
+            imageUrl: cloudinarySecureUrlPromiseResolved,
+          });
 
-          await newImage.save()
+          await newImage.save();
 
-
-          monumentImageUrlArray.push(newImage._id)
-          monumentImageTitleArray.push(newImage.title)
-
-
-
+          monumentImageUrlArray.push(newImage._id);
+          monumentImageTitleArray.push(newImage.title);
         }
-        
-      }
-      else {
-        const imageBuffer = await handleFileUpload(image);
-        let imageFileName = ''
-
-      if (data.imageUpload.hapi.filename.length !== 0) {
-        cloudinaryPromise = async_func(imageBuffer);
-        imageFileName = image.hapi.filename
-        cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-          return data.secure_url;
-        });
       } else {
-        imageFileName = 'pointOfInterestDefaultImage.png'
-        cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
+        const imageBuffer = await handleFileUpload(image);
+        let imageFileName = "";
+
+        if (data.imageUpload.hapi.filename.length !== 0) {
+          cloudinaryPromise = async_func(imageBuffer);
+          imageFileName = image.hapi.filename;
+          cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+            return data.secure_url;
+          });
+        } else {
+          imageFileName = "pointOfInterestDefaultImage.png";
+          cloudinarySecureUrl = "../images/pointOfInterestDefaultImage.png";
+        }
+
+        let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
+
+        let newImage = new Image({
+          title: imageFileName,
+          imageUrl: cloudinarySecureUrlPromiseResolved,
+        });
+
+        await newImage.save();
+
+        monumentImageUrlArray.push(newImage._id);
+        monumentImageTitleArray.push(newImage.title);
+        //monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
       }
+      console.log(monumentImageUrlArray);
+      console.log(image);
 
-      
-
-      let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
-
-      let newImage = new Image(
-            {
-              title: imageFileName,
-              imageUrl: cloudinarySecureUrlPromiseResolved
-            }
-          )
-
-          await newImage.save()
-
-
-      monumentImageUrlArray.push(newImage._id)
-       monumentImageTitleArray.push(newImage.title)
-      //monumentImageUrlArray.push(cloudinarySecureUrlPromiseResolved)
-
-      }
-      console.log(monumentImageUrlArray)
-      console.log(image)
-
-      
-
-      
       const provinceCategoryRef = await Category.find({ title: request.payload.province });
       const id = request.auth.credentials.id;
       const user = await User.findById(id);
@@ -452,10 +428,7 @@ const Monuments = {
         await newMonument.save();
       }
 
-      
-      
-      await Image.updateMany({title: { $in: monumentImageTitleArray}}, {$set: {"monument": newMonument._id}})
-      
+      await Image.updateMany({ title: { $in: monumentImageTitleArray } }, { $set: { monument: newMonument._id } });
 
       return h.redirect("/report");
     },
@@ -526,9 +499,9 @@ const Monuments = {
       let categories = request.payload.category;
       console.log("start of edit flow");
       let newCategoryObjectIds = [];
-      let monumentImageUrlArray = []
-      let monumentImageTitleArray = []
-       let cloudinaryPromise;
+      let monumentImageUrlArray = [];
+      let monumentImageTitleArray = [];
+      let cloudinaryPromise;
       let cloudinarySecureUrl;
 
       const image = await monumentEdit.imageUpload;
@@ -538,11 +511,8 @@ const Monuments = {
       let streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           let stream = cloudinary.uploader.upload_stream((result, error) => {
-            
             resolve(result);
           });
-
-         
 
           streamifier.createReadStream(req).pipe(stream);
         });
@@ -550,77 +520,57 @@ const Monuments = {
 
       async function async_func(req) {
         let result = await streamUpload(req);
-        
 
         return result;
       }
 
-
-
-
-
-      console.log("image field")
-      console.log(image)
-      if (image.length > 1 ) {
+      console.log("image field");
+      console.log(image);
+      if (image.length > 1) {
         for (let individualImage in image) {
           let imageBuffer = await handleFileUpload(image[individualImage]);
           cloudinaryPromise = async_func(imageBuffer);
-          console.log('Testing image name field')
-          console.log(image[individualImage].hapi.filename)
+          console.log("Testing image name field");
+          console.log(image[individualImage].hapi.filename);
           cloudinarySecureUrl = cloudinaryPromise.then((data) => {
             //Edit to include public id (for deleting from Cloudinary - NEED TO UPDATE MODEL AS WELL)
-          console.log(data)
-          return data.secure_url;
-        });
+            console.log(data);
+            return data.secure_url;
+          });
 
           let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
-          let newImage = new Image(
-            {
-              title: image[individualImage].hapi.filename,
-              imageUrl: cloudinarySecureUrlPromiseResolved
-            }
-          )
+          let newImage = new Image({
+            title: image[individualImage].hapi.filename,
+            imageUrl: cloudinarySecureUrlPromiseResolved,
+          });
 
-          await newImage.save()
+          await newImage.save();
 
-
-          monumentImageUrlArray.push(newImage._id)
+          monumentImageUrlArray.push(newImage._id);
           //monumentImageTitleArray.push(newImage.title)
-
-
-
         }
-        
-      }
-      else if (image.hapi.filename !== '') {
-        console.log('getting to here for single image')
+      } else if (image.hapi.filename !== "") {
+        console.log("getting to here for single image");
         let imageBuffer = await handleFileUpload(image);
         cloudinaryPromise = async_func(imageBuffer);
-          cloudinarySecureUrl = cloudinaryPromise.then((data) => {
-            //Edit to include public id (for deleting from Cloudinary - NEED TO UPDATE MODEL AS WELL)
-          console.log(data)
+        cloudinarySecureUrl = cloudinaryPromise.then((data) => {
+          //Edit to include public id (for deleting from Cloudinary - NEED TO UPDATE MODEL AS WELL)
+          console.log(data);
           return data.secure_url;
         });
 
-
         let cloudinarySecureUrlPromiseResolved = await cloudinarySecureUrl;
 
-          let newImage = new Image(
-            {
-              title: image.hapi.filename,
-              imageUrl: cloudinarySecureUrlPromiseResolved
-            }
-          )
+        let newImage = new Image({
+          title: image.hapi.filename,
+          imageUrl: cloudinarySecureUrlPromiseResolved,
+        });
 
-          await newImage.save()
+        await newImage.save();
 
-
-          monumentImageUrlArray.push(newImage._id)
-
+        monumentImageUrlArray.push(newImage._id);
       }
-      
-  
 
       const monument = await Monument.findById(request.params.id);
       let monumentId = monument._id;
@@ -729,17 +679,15 @@ const Monuments = {
         }
       }
 
-     
-
       console.log("monument category ids");
       console.log(newCategoryObjectIds);
       monument.title = monumentEdit.title;
       monument.description = monumentEdit.description;
       monument.user = monumentEdit._id;
       if (monumentImageUrlArray.length > 0) {
-         monument.images = monumentImageUrlArray;
+        monument.images = monumentImageUrlArray;
       }
-     
+
       monument.categories = [monument.categories[0]];
       (monument.latitude = monumentEdit.latitude), (monument.longitude = monumentEdit.longitude);
 
@@ -757,7 +705,7 @@ const Monuments = {
       }
 
       await monument.save();
-      await Image.updateMany({_id: { $in: monumentImageUrlArray}}, {$set: {"monument": monument._id}})
+      await Image.updateMany({ _id: { $in: monumentImageUrlArray } }, { $set: { monument: monument._id } });
       console.log(monument);
 
       return h.redirect("/report");
@@ -766,29 +714,20 @@ const Monuments = {
   deleteMonument: {
     handler: async function (request, h) {
       const id = request.auth.credentials.id;
-     
-     
-       const recordId = request.params.id;
-       let test = await Monument.deleteOne({ _id: recordId });
-       console.log(test)
+
+      const recordId = request.params.id;
+      let test = await Monument.deleteOne({ _id: recordId });
+      console.log(test);
       await Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
-      await Image.deleteMany({monument: recordId})
+      await Image.deleteMany({ monument: recordId });
 
-
-
-
-
-
-        const user = await User.findById(id);
-         let existingRecordCount = user.numberOfRecords;
+      const user = await User.findById(id);
+      let existingRecordCount = user.numberOfRecords;
       if (existingRecordCount > 0) {
         user.numberOfRecords = existingRecordCount - 1;
       }
 
       await user.save();
-    
-
-      
 
       return h.redirect("/report");
     },

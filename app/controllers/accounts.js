@@ -1,7 +1,7 @@
 "use strict";
 const User = require("../models/user");
-const Category = require("../models/categories")
-const Monument = require("../models/monuments")
+const Category = require("../models/categories");
+const Monument = require("../models/monuments");
 const Joi = require("@hapi/joi");
 
 const Accounts = {
@@ -150,10 +150,9 @@ const Accounts = {
   showAdminDashboard: {
     handler: async function (request, h) {
       const allUsers = await User.find().lean();
-      const allUsersCount = await User.find().count()
-      const allCategoriesCount = await Category.find().count()
-      const allMonumentsCount = await Monument.find().count()
-      
+      const allUsersCount = await User.find().count();
+      const allCategoriesCount = await Category.find().count();
+      const allMonumentsCount = await Monument.find().count();
 
       const id = request.auth.credentials.id;
       const user = await User.findById(id).lean();
@@ -162,28 +161,27 @@ const Accounts = {
       if (user.userType === "Admin") {
         adminUser = true;
       }
-      return h.view("adminDashboard", { 
-        adminUser: adminUser, 
+      return h.view("adminDashboard", {
+        adminUser: adminUser,
         allUsers: allUsers,
         allUsersCount: allUsersCount,
         allCategoriesCount: allCategoriesCount,
-        allMonumentsCount: allMonumentsCount });
+        allMonumentsCount: allMonumentsCount,
+      });
     },
   },
   deleteAccount: {
     handler: async function (request, h) {
       let userId = request.params.id;
       const loggedInId = request.auth.credentials.id;
-      const user = await User.findById(userId)
-      const loggedInUser = await User.findById(loggedInId)
+      const user = await User.findById(userId);
+      const loggedInUser = await User.findById(loggedInId);
       await User.deleteOne({ _id: userId });
-      if (loggedInUser.userType === 'User') {
+      if (loggedInUser.userType === "User") {
         return h.redirect("/accountDeleted");
+      } else if (loggedInUser.userType === "Admin") {
+        return h.redirect("/adminDashboard", { accountJustDeleted: "true" });
       }
-      else if (loggedInUser.userType === 'Admin') {
-         return h.redirect("/adminDashboard", {accountJustDeleted: "true"});  
-      }
-      
     },
   },
   accountDeleted: {
@@ -238,7 +236,7 @@ const Accounts = {
             "November",
             "December",
           ];
-          let hour = ("0" + (currentDate.getHours())).slice(-2);
+          let hour = ("0" + currentDate.getHours()).slice(-2);
           let formattedDate =
             ("0" + currentDate.getDate()).slice(-2) +
             "-" +
