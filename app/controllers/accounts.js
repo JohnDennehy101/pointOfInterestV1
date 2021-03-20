@@ -3,6 +3,7 @@ const User = require("../models/user");
 const Category = require("../models/categories");
 const Monument = require("../models/monuments");
 const Joi = require("@hapi/joi");
+const DateFunctionality = require("../utils/dateFunctionality");
 
 const Accounts = {
   index: {
@@ -209,51 +210,8 @@ const Accounts = {
         user.comparePassword(password);
         request.cookieAuth.set({ id: user.id });
 
-        const fullDateOptions = {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          second: "numeric",
-        };
-
-        //Method that formats the date and returns it with the time appended
-        function formatDateWithTime(currentDate) {
-          let month = currentDate.getMonth();
-          let months = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-          ];
-          let hour = ("0" + currentDate.getHours()).slice(-2);
-          let formattedDate =
-            ("0" + currentDate.getDate()).slice(-2) +
-            "-" +
-            (months[month] +
-              "-" +
-              currentDate.getFullYear() +
-              " " +
-              hour +
-              ":" +
-              ("0" + currentDate.getMinutes()).slice(-2) +
-              ":" +
-              ("0" + currentDate.getSeconds()).slice(-2));
-
-          return formattedDate;
-        }
         let now = new Date();
-        let lastLoginDateString = formatDateWithTime(now);
+        let lastLoginDateString = DateFunctionality.formatDateWithTime(now);
         user.lastLogin = lastLoginDateString;
         await user.save();
         return h.redirect("/home");
