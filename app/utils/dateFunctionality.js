@@ -1,6 +1,7 @@
 "use strict";
 
 const DateFunctionality = {
+  //Return formatted date based on current date passed as parameter
   formatDateWithTime: function (currentDate) {
     let month = currentDate.getMonth();
     let months = [

@@ -2,28 +2,34 @@
 const Category = require("../models/categories");
 
 const CategoryFunctionality = {
+  //Find province categories (and populate monuments in returned result)
   findProvinceCategories: async function () {
     return Category.find({ title: { $in: ["Munster", "Leinster", "Connacht", "Ulster"] } })
       .populate("monuments")
       .lean();
   },
+  //Find all other categories (and populate monuments in returned result)
   findAllOtherCategories: async function () {
     return Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } })
       .populate("monuments")
       .lean();
   },
+  //Removed monument id from categories (used on editing of monument - initially monumentId is removed from all categories on edit).
   pullPriorMonumentIds: async function (monumentId) {
     return Category.updateMany({ $pull: { monuments: { $in: [monumentId] } } });
   },
 
+  //Add relevant province category with monument id
   editMonumentProvince: async function (province, monumentId) {
     return Category.updateOne({ title: province }, { $push: { monuments: monumentId } });
   },
 
+  //Remove monument id from categories (on deletion of monument)
   removeMonumentId: async function (recordId) {
     return Category.updateMany({ $pull: { monuments: { $in: [recordId] } } });
   },
 
+  //Add province category (and include monument id) if relevant category does not already exist for province
   addMonumentProvinceCategory: async function (province, newMonument) {
     let category = await Category.find({ title: province });
 
@@ -43,6 +49,9 @@ const CategoryFunctionality = {
     return category._id;
   },
 
+  //For all non-provincial categories (category checkboxes on add monument screen)
+  //Check if category exists. If it does, append monument id to monuments field on category.
+  //If it does not exist, create category and include monument id on monuments field on newly created category.
   addMonumentAdditionalCategories: async function (categories, monumentId) {
     let newCategoryObjectIds = [];
 
@@ -98,6 +107,10 @@ const CategoryFunctionality = {
 
     return newCategoryObjectIds;
   },
+
+  //For all non-provincial categories (category checkboxes on edit monument screen)
+  //Check if category exists. If it does, append monument id to monuments field on category.
+  //If it does not exist, create category and include monument id on monuments field on newly created category.
   editMonumentAdditionalCategories: async function (categories, monumentId) {
     let newCategoryObjectIds = [];
     if (Array.isArray(categories)) {

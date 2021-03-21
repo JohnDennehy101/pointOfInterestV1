@@ -2,6 +2,9 @@
 const axios = require("axios");
 
 const WeatherFunctionality = {
+  //Make api call to openweather with monument coordinates.
+  //If successful, return data.
+  //If unsuccessful, return undefined (flag to indicated noWeatheDataComponent should be shown).
   getWeatherDetails: async function (monument) {
     try {
       const apiWeatherRequest = await axios.get(
@@ -17,6 +20,8 @@ const WeatherFunctionality = {
       return undefined;
     }
   },
+  //Method used to manipulate date from openweather response into format that is then passed to viewMonument view.
+  //If apiweather response is undefined, multiple indicators set to undefined or false to indciate that no weatherComponent should be shown to user.
   manipulateApiResponse: function (weatherApiResponse) {
     let weatherData,
       currentWeather,
