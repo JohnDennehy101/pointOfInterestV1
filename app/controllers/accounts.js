@@ -50,8 +50,7 @@ const Accounts = {
 
         const payload = request.payload;
         const userType = payload.userType;
-        console.log("User Type");
-        console.log(userType);
+       
         let accountType = "User";
 
         if (typeof userType !== "undefined") {
