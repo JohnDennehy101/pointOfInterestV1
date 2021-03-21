@@ -4,6 +4,7 @@ const Category = require("../models/categories");
 const Monument = require("../models/monuments");
 const Joi = require("@hapi/joi");
 const DateFunctionality = require("../utils/dateFunctionality");
+const Boom = require("@hapi/boom");
 
 const Accounts = {
   //Shown to users on first landing on site
