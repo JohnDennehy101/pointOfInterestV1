@@ -1,0 +1,21 @@
+<table class="uk-table uk-table-divider">
+    <thead>
+        <tr>
+            <th class="uk-text-center">Metric</th>
+            <th class="uk-text-center">Value</th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        {{#each currentWeatherFormattedObject}}
+        <tr>
+            <td style="width: 50%">{{@key}}</td>
+            <td>{{this}}</td>
+
+
+        </tr>
+        {{/each}}
+
+    </tbody>
+</table>

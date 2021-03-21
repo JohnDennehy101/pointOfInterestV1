@@ -16,40 +16,12 @@
 
             <div class="uk-text-center uk-text-small uk-grid uk-margin-top" uk-grid>
                 <div class="uk-width-expand@m uk-first-column">
-                    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
-                        <h4 class="uk-text-primary">Categories</h4>
-                        <ul class="uk-list">
-                            {{#each monument.categories}}
-                            <ul class="uk-list uk-list-circle">{{title}}</ul>
-                            {{/each}}
-
-                        </ul>
-
-                    </div>
+                    {{> monumentCategoriesComponent}}
 
                 </div>
 
                 <div class="uk-width-1-2@m">
-                    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
-                        <h4 class="uk-text-primary">GPS Coordinates</h4>
-                        <table class="uk-table uk-table-small">
-                            <tbody>
-                                <tr>
-                                    <td>Latitude</td>
-                                    <td>{{monument.coordinates.latitude}}</td>
-
-                                </tr>
-                                <tr>
-
-                                    <td>Longitude</td>
-                                    <td>{{monument.coordinates.longitude}}</td>
-
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-                    </div>
+                    {{> monumentCoordinatesComponent}}
 
 
                 </div>
@@ -63,57 +35,11 @@
                 <div class="uk-card uk-card-default uk-card-body uk-padding-small">
                     <h4 class="uk-text-primary">Current Weather</h4>
                     <div class="uk-child-width-expand@s uk-text-center" uk-grid>
-                        <div>
-                            <div class="uk-card uk-card-default uk-card-body">
-                                <h5>Overview</h5>
-
-                                {{!-- <img src="../images/rain.png" width="50"> --}}
-                                <img src="" id="weatherDescriptionIcon" width="50" />
-
-                                <p>{{currentWeatherDescription}}</p>
-
-                            </div>
-                        </div>
-                        <div>
-                            <div class="uk-card uk-card-default uk-card-body">
-                                <h5>Temperature</h5>
-
-                                <img src="../images/thermometer.png" width="50">
-
-                                <p>{{currentWeather.temp}}°C</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="uk-card uk-card-default uk-card-body">
-                                <h5>Sunset</h5>
-
-                                <img src="../images/sunrise.png" width="50">
-
-                                <p>{{sunset}}</p>
-                            </div>
-                        </div>
+                        {{> weatherOverviewComponent}}
+                        {{> temperatureOverviewComponent}}
+                        {{> sunsetOverviewComponent}}
                     </div>
-                    <table class="uk-table uk-table-divider">
-                        <thead>
-                            <tr>
-                                <th class="uk-text-center">Metric</th>
-                                <th class="uk-text-center">Value</th>
-
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each currentWeatherFormattedObject}}
-                            <tr>
-                                <td style="width: 50%">{{@key}}</td>
-                                <td>{{this}}</td>
-
-
-                            </tr>
-                            {{/each}}
-
-                        </tbody>
-                    </table>
+                    {{> weatherOverviewTable}}
                 </div>
 
             </div>
@@ -122,43 +48,12 @@
             <div class="uk-text-center uk-text-small uk-margin uk-width-expand@m">
                 <div class="uk-card uk-card-default uk-card-body uk-padding-small">
                     <h4 class="uk-text-primary">Weather Forecast</h4>
-                    <table class="uk-table uk-table-divider">
-                        <thead>
-                            <tr>
-                                <th class="uk-text-center">Day</th>
-                                <th class="uk-text-center">Overview</th>
-                                <th class="uk-text-center">Description</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each weatherForecastNextWeek}}
-                            <tr>
-                                <td>{{Date}}</td>
-                                <td>{{Summary}}</td>
-                                <td>{{Description}}</td>
-
-                            </tr>
-                            {{/each}}
-
-                        </tbody>
-                    </table>
+                    {{> weatherForecastTable}}
                 </div>
 
             </div>
             {{else}}
-            <div class="uk-margin-top">
-                <div class="uk-card uk-card-default uk-card-large uk-card-body">
-                    <h3 class="uk-card-title">No Weather Data</h3>
-                    <p>No weather was found for the coordinates provided. The coordinates can be edited on the edit
-                        monument screen.</p>
-
-                    <a href="/editMonumentView/{{monument._id}}">
-                        <button class="uk-button uk-button-secondary">Edit
-                            Monument</button>
-                    </a>
-                </div>
-            </div>
+            {{> noWeatherDataComponent}}
 
             {{/if}}
 

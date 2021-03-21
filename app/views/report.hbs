@@ -1,81 +1,12 @@
 <div class="uk-flex uk-flex-center uk-flex-middle uk-grid-small" uk-grid>
     <div class="uk-padding-small uk-first-column">
-        <a href='#' uk-toggle="target: #offcanvas-nav">
-            <i class="fas fa-bars fa-2x" title="Index of all monuments" pos="bottom" uk-tooltip></i>
-        </a>
+        {{> offCanvasNavHeader}}
     </div>
     {{> title-card title="Monument" subTitle="Monuments added so far"}}
     {{> main-menu }}
 </div>
 
-<div id="offcanvas-nav" uk-offcanvas="overlay: true">
-    <div class="uk-offcanvas-bar">
-        <button class="uk-offcanvas-close uk-icon uk-close" type="button" uk-close>
-
-        </button>
-
-        <li class="uk-nav-header">Province</li>
-
-
-        {{#each provinceCategories}}
-        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
-
-            <li class="uk-parent">
-
-                <a href="#" uk-toggle="target: .toggle-display-{{title}}">{{title}}</a>
-                <ul class="uk-nav-sub toggle-display-{{title}}" hidden>
-
-                    {{#each monuments}}
-
-                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
-
-
-                    {{/each}}
-
-
-
-
-                </ul>
-            </li>
-
-        </ul>
-        {{/each}}
-
-        <li class="uk-nav-header">Other Categories</li>
-        {{#each otherCategories}}
-        <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
-
-            <li class="uk-parent">
-
-                <a href="#" uk-toggle="target: .toggle-display-{{title}}">{{title}}</a>
-                <ul class="uk-nav-sub toggle-display-{{title}}" hidden>
-
-                    {{#each monuments}}
-
-                    <li><a href="/viewMonument/{{_id}}">{{title}}</a></li>
-
-
-                    {{/each}}
-
-
-
-
-                </ul>
-            </li>
-
-        </ul>
-        {{/each}}
-
-
-    </div>
-</div>
-
-
-
-
-
-
-
+{{> offCanvasNav}}
 
 <div class="uk-container uk-margin">
     <div class="uk-grid-small" uk-grid>
@@ -83,91 +14,13 @@
             <h1 class="uk-heading">Monuments Added To Date</h1>
         </div>
         <div class="uk-width-auto@m">
-            <button class="uk-button uk-button-default">Filter</button>
-            <div uk-dropdown="mode: click">
-
-                <fieldset class="uk-fieldset">
-
-                    <legend class="uk-legend">County</legend>
-
-                    <div class="uk-margin">
-                        <form id="filterCountyForm" action="/getCountyMonuments" method="GET" style="display:inline">
-                            <select class="uk-select" id="countySelectField">
-                                <option value="" disabled selected>Select County</option>
-                                <option>Antrim</option>
-                                <option>Armagh</option>
-                                <option>Carlow</option>
-                                <option>Cavan</option>
-                                <option>Clare</option>
-                                <option>Cork</option>
-                                <option>Derry</option>
-                                <option>Donegal</option>
-                                <option>Down</option>
-                                <option>Dublin</option>
-                                <option>Fermanagh</option>
-                                <option>Galway</option>
-                                <option>Kerry</option>
-                                <option>Kildare</option>
-                                <option>Kilkenny</option>
-                                <option>Laois</option>
-                                <option>Leitrim</option>
-                                <option>Limerick</option>
-                                <option>Longford</option>
-                                <option>Louth</option>
-                                <option>Mayo</option>
-                                <option>Meath</option>
-                                <option>Monaghan</option>
-                                <option>Offaly</option>
-                                <option>Roscommon</option>
-                                <option>Sligo</option>
-                                <option>Tipperary</option>
-                                <option>Tyrone</option>
-                                <option>Waterford</option>
-                                <option>Westmeath</option>
-                                <option>Wexford</option>
-                                <option>Wicklow</option>
-
-
-                            </select>
-                            <button class="uk-button uk-button-primary uk-margin-top" type="submit"
-                                formmethod="get">Filter by county</button>
-
-                        </form>
-                    </div>
-
-                    <legend class="uk-legend">Title</legend>
-
-                    <form id="filterTitleForm" action="/getMonumentByTitle" method="GET" style="display:inline">
-
-                        <div class="uk-margin">
-                            <select class="uk-select" id="titleSelectField">
-                                <option value="" disabled selected>Select Title</option>
-                                {{#each monuments}}
-                                <option>{{title}}</option>
-                                {{/each}}
-                            </select>
-                            <button class="uk-button uk-button-primary uk-margin-top" type="submit"
-                                formmethod="get">Filter by title</button>
-                    </form>
-            </div>
-
-
-
-
-
-
-
-
-            </fieldset>
+            {{> filterComponent}}
 
         </div>
     </div>
     <div class="uk-width-auto@m">
         <div class="uk-margin">
-            <form class="uk-search uk-search-default uk-width-1-1">
-                <a href="/report" id="searchIcon" class="uk-search-icon-flip" type="submit" uk-search-icon></a>
-                <input class="uk-search-input" id="searchInputField" type="search" placeholder="Search">
-            </form>
+            {{> searchTitlesForm}}
         </div>
     </div>
 
@@ -180,14 +33,7 @@
 
 
 {{#if resultCount}}
-<div uk-alert>
-    <form action="/report" method="GET" style="display:inline">
-        <a class="uk-alert-close" uk-close></a>
-        <h3>Results Found</h3>
-        <p>{{resultCount}} result(s) found for that search. Click the button below to clear the current filter.</p>
-        <button class="uk-button uk-button-primary" type="submit">Clear filter</button>
-    </form>
-</div>
+{{> filterResultComponent}}
 {{/if}}
 
 
@@ -203,15 +49,9 @@
 <form id="filterByCountyTrigger" style="display:none">
 
 </form>
+
 {{else}}
-<div uk-alert>
-    <form action="/report" method="GET" style="display:inline">
-        <a class="uk-alert-close" uk-close></a>
-        <h3>No Results Found</h3>
-        <p>No matches were found for that search. Click the button below to clear the current filter.</p>
-        <button class="uk-button uk-button-primary" type="submit">Clear filter</button>
-    </form>
-</div>
+{{> noResultsFoundFilter}}
 {{/if}}
 
 

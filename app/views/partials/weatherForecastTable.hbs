@@ -1,0 +1,21 @@
+<table class="uk-table uk-table-divider">
+    <thead>
+        <tr>
+            <th class="uk-text-center">Day</th>
+            <th class="uk-text-center">Overview</th>
+            <th class="uk-text-center">Description</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {{#each weatherForecastNextWeek}}
+        <tr>
+            <td>{{Date}}</td>
+            <td>{{Summary}}</td>
+            <td>{{Description}}</td>
+
+        </tr>
+        {{/each}}
+
+    </tbody>
+</table>

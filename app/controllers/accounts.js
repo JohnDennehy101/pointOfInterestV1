@@ -9,13 +9,13 @@ const Accounts = {
   index: {
     auth: false,
     handler: function (request, h) {
-      return h.view("main", { title: "Welcome to Donations" });
+      return h.view("main");
     },
   },
   showSignup: {
     auth: false,
     handler: function (request, h) {
-      return h.view("signup", { title: "Sign up for donations" });
+      return h.view("signup");
     },
   },
   signup: {
@@ -79,7 +79,6 @@ const Accounts = {
   },
   showSettings: {
     handler: async function (request, h) {
-      console.log("showing settings page");
       let showUpdatedNotification;
       let now = new Date();
       const id = request.auth.credentials.id;
@@ -142,9 +141,7 @@ const Accounts = {
       let now = new Date();
       user.lastUpdated = now.getTime();
       await user.save();
-      console.log("Updated settings");
 
-      console.log(now.getTime());
       return h.redirect("/settings");
     },
   },
@@ -178,11 +175,20 @@ const Accounts = {
       const user = await User.findById(userId);
       const loggedInUser = await User.findById(loggedInId);
       await User.deleteOne({ _id: userId });
-      if (loggedInUser.userType === "User") {
+      
+      if (loggedInUser._id != userId) {
+
+        if (loggedInUser.userType === "User") {
         return h.redirect("/accountDeleted");
       } else if (loggedInUser.userType === "Admin") {
         return h.redirect("/adminDashboard", { accountJustDeleted: "true" });
       }
+
+      }
+      else {
+         return h.redirect("/accountDeleted");
+      }
+      
     },
   },
   accountDeleted: {
