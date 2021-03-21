@@ -1,0 +1,31 @@
+<table class="uk-table uk-table-divider">
+    <thead>
+        <tr>
+            <th class="uk-text-center" style="width: 33.33%">User Name</th>
+            <th class="uk-text-center" style="width: 33.33%">Number of Existing Records</th>
+            <th class="uk-text-center" style="width: 33.33%">Last Login</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each allUsers}}
+        <tr>
+
+            <td class="uk-text-center" style="width: 33.33%">{{firstName}} {{lastName}}</td>
+            <td class="uk-text-center" style="width: 33.33%">{{numberOfRecords}}</td>
+            <td class="uk-text-center" style="width: 33.33%">{{lastLogin}}</td>
+            <td>
+                <p style="display: none">{{_id}}</p>
+                <a href="#delete-account-modal" className="deleteUserIcon" uk-toggle dataset="{{_id}}">
+                    <i class="fas fa-trash-alt" style="color: red"></i>
+                </a>
+            </td>
+
+
+
+        </tr>
+        {{/each}}
+
+
+    </tbody>
+</table>
