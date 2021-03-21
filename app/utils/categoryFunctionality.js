@@ -35,7 +35,7 @@ const CategoryFunctionality = {
 
       await category.save();
     } else {
-      console.log(category);
+   
       category[0].monuments.push(newMonument._id);
       category[0].save();
     }
