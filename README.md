@@ -20,4 +20,8 @@ I chose to focus on Irish national monuments for this assignment.
 
 ## Glitch Application
 
-Here's a link to a live version of the application on Glitch: [Glitch Application Link](https://national-monuments-v3.glitch.me/)
+Here's a link to a live version of the application on Glitch: [Glitch Application Link](https://point-of-interest-v1.glitch.me/)
+
+## Heroku Application
+
+Here's a link to a live version of the application on Heroku: [Heroku Application Link](https://point-of-interest-v1.herokuapp.com/)
