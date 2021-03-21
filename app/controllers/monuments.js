@@ -105,7 +105,7 @@ const Monuments = {
       output: "stream",
       parse: true,
       allow: "multipart/form-data",
-      maxBytes: 2 * 1000 * 1000,
+      maxBytes: 2 * 40000 * 40000,
       multipart: true,
     },
     //Joi validation makes sure relevant info is provided by user. If not failAction is triggered
@@ -252,7 +252,7 @@ const Monuments = {
       output: "stream",
       parse: true,
       allow: "multipart/form-data",
-      maxBytes: 2 * 1000 * 1000,
+      maxBytes: 2 * 40000 * 40000,
       multipart: true,
     },
     //Joi validation ensures that all required info is provided in request. Otherwise, failAction is enabled.
