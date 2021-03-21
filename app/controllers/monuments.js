@@ -346,7 +346,8 @@ const Monuments = {
   searchMonumentTitles: {
     handler: async function (request, h) {
       let monument = await Monument.find({ title: { $regex: request.params.title } })
-        .populate("user").populate("images")
+        .populate("user")
+        .populate("images")
         .lean();
       let resultCount = await Monument.find({ title: { $regex: request.params.title } })
         .populate("user")

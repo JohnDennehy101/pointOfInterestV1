@@ -19,8 +19,8 @@ userSchema.statics.findByEmail = function (email) {
   return this.findOne({ email: email });
 };
 
-userSchema.methods.comparePassword = function (candidatePassword) {
-  const isMatch = this.password === candidatePassword;
+userSchema.methods.comparePassword = function (userPassword) {
+  const isMatch = this.password === userPassword;
   if (!isMatch) {
     throw Boom.unauthorized("Password mismatch");
   }
