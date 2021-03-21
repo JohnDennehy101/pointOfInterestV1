@@ -29,7 +29,6 @@ const Monuments = {
       //existing categories are displayed as list of checkboxes to allow users to add monument to existing categories
       const categories = await Category.find({ title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] } }).lean();
 
-     
       return h.view("home", { title: "Add a monument", categories: categories, adminUser: adminUser });
     },
   },
@@ -40,7 +39,7 @@ const Monuments = {
       //Find user by credentials id
       const user = await User.findById(id).lean();
       let adminUser = false;
-      
+
       //if admin user, set adminUser flag to true (used to check if additional adminDashboard icon should be shown in header)
       if (user.userType === "Admin") {
         adminUser = true;
@@ -121,11 +120,17 @@ const Monuments = {
         latitude: Joi.number().required(),
         longitude: Joi.number().required(),
       },
-      failAction: function (request, h, error) {
+      failAction: async function (request, h, error) {
+        //Find all non-provincial categories (as province is already covered off in province input field)
+        //existing categories are displayed as list of checkboxes to allow users to add monument to existing categories
+        const categories = await Category.find({
+          title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] },
+        }).lean();
         return h
           .view("home", {
             title: "Error adding Monument",
             errors: error.details,
+            categories: categories,
           })
           .takeover()
           .code(400);
@@ -153,7 +158,6 @@ const Monuments = {
       //Wrangle request payload to create cloudinary images, add image documents in mongodb and return image document ids and titles
       let imageResult = await ImageFunctionality.addMonumentImages(image, data);
 
-
       //Add new monument (note empty categories field on initial creation)
       const newMonument = new Monument({
         title: request.payload.title,
@@ -168,9 +172,6 @@ const Monuments = {
 
       await newMonument.save();
 
-    
-      
-
       //Adding province category (if province category does not exist, new one created and monument Id added).
       //If province category already exists, monument id is appended to existing province category
       let provinceCategoryId = await CategoryFunctionality.addMonumentProvinceCategory(
@@ -183,18 +184,16 @@ const Monuments = {
 
       let monumentId = newMonument._id;
       await newMonument.save();
-      
+
       //Additional categories check (if user has checked a category on monument creation or added a new category and checked it).
       //Adding other categories (if relevant other category does not exist, new one created and monument Id added).
       //If other category already exists, monument id is appended to existing category
       let otherCategoryIds = await CategoryFunctionality.addMonumentAdditionalCategories(categories, monumentId);
-      
 
       //If the length of otherCategoryIds is greater than 0, user did select other categories for monument.
       //Programme loops through each, appending each category document id to the monument categories array (adding to the province category id that was already added above)
       if (otherCategoryIds.length > 0) {
         for (let id in otherCategoryIds) {
-      
           newMonument.categories.push(otherCategoryIds[id]);
         }
 
@@ -207,7 +206,6 @@ const Monuments = {
       return h.redirect("/report");
     },
   },
-
 
   //Method for displaying edit monument view
   editMonumentView: {
@@ -269,11 +267,30 @@ const Monuments = {
         latitude: Joi.number().required(),
         longitude: Joi.number().required(),
       },
-      failAction: function (request, h, error) {
+      failAction: async function (request, h, error) {
+        //Find all non-provincial categories (as province is already covered off in province input field)
+        //existing categories are displayed as list of checkboxes to allow users to add monument to existing categories
+        const categories = await Category.find({
+          title: { $nin: ["Munster", "Leinster", "Connacht", "Ulster"] },
+        }).lean();
+        //Find individual monument
+        const monument = await Monument.findById(request.params.id).populate("categories").populate("images").lean();
+        let selectedCategories = monument.categories;
+        let selectedCategoryTitles = [];
+
+        //If monument already has non-province categories associated with it, push the titles of these categories to the selectedCategoryTitles array (so that these can be pre-checked on client side via JavaScript wrangling)
+        if (selectedCategories.length !== 0) {
+          for (let category in selectedCategories) {
+            selectedCategoryTitles.push(selectedCategories[category].title);
+          }
+        }
         return h
-          .view("home", {
+          .view("editPointOfInterest", {
             title: "Error adding Monument",
             errors: error.details,
+            categories: categories,
+            selectedCategories: selectedCategoryTitles,
+            monument: monument,
           })
           .takeover()
           .code(400);
@@ -344,11 +361,9 @@ const Monuments = {
 
       //Remove monument document id from categories
       await CategoryFunctionality.removeMonumentId(recordId);
-      
 
       //Delete image documents associated with this monument (monument document id)
       await ImageFunctionality.deleteImageRecords(recordId);
-     
 
       const user = await User.findById(id);
       let existingRecordCount = user.numberOfRecords;
@@ -371,14 +386,14 @@ const Monuments = {
         .populate("user")
         .populate("images")
         .lean();
-      
+
       //Check count of records for county passed in request.params.county
       let resultCount = await Monument.find({ county: request.params.county })
         .populate("user")
         .populate("images")
         .count()
         .lean();
-      
+
       //Obtain all monuments (for filter component)
       let allMonuments = await Monument.find().populate("user").populate("images").lean();
 

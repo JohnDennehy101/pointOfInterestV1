@@ -16,7 +16,6 @@ const ImageFunctionality = {
   //Streamifier package used to create read stream
   streamUpload: async function (req) {
     return new Promise((resolve, reject) => {
-     
       let stream = cloudinary.uploader.upload_stream((result, error) => {
         resolve(result);
       });
@@ -30,7 +29,7 @@ const ImageFunctionality = {
 
     return result;
   },
- 
+
   //Pass image file data to promise, and resolve with data
   handleFileUpload: async function (file) {
     return new Promise((resolve, reject) => {
